@@ -30,7 +30,7 @@ const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: f
   })
   .then(responseData => {
     showAlert('Alumno creado exitosamente', true);
-    // Limpiar el formulario, mostrar mensaje de redirigir al login
+   
     form.value.nombre = '';
     form.value.mail = '';
     form.value.password = '';
@@ -43,9 +43,50 @@ const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: f
   .catch(error => showAlert(`Error al crear el alumno: ${error.message}`, false));
 
 }
+
+
+
+/* async function RegistrarUsuario() {
+  const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: form.value.password };
+
+  fetch("http://localhost/APIFreetours/api.php/usuarios", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+    return response.text(); // Cambia a .text() para ver el contenido completo
+  })
+  .then(responseText => {
+    console.log('Respuesta del servidor:', responseText); // Verifica la respuesta completa
+    try {
+      const responseData = JSON.parse(responseText); // Intenta convertir la respuesta en JSON
+      showAlert('Alumno creado exitosamente', true);
+
+      form.value.nombre = '';
+      form.value.mail = '';
+      form.value.password = '';
+
+      setTimeout(() => {
+        location.href = '/login';
+      }, 2000);
+
+    } catch (e) {
+      console.error("La respuesta no es un JSON válido:", e);
+      showAlert('Error al crear el alumno: La respuesta no es un JSON válido', false);
+    }
+  })
+  .catch(error => showAlert(`Error al crear el alumno: ${error.message}`, false));
+} */
+
 </script>
 <template>
-    <form @submit.prevent="RegistrarUsuario()" class="d-flex  align-items-center gap-2">
+    <form @submit.prevent="RegistrarUsuario()" class="d-flex  align-items-center gap-2 m-3">
         
         <label for="nombre">Nombre</label>
         <input v-model="form.nombre" type="text" class="form-control " placeholder="Nombre" required />
@@ -55,7 +96,7 @@ const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: f
         
         <label for="password">Contraseña</label>
         <input v-model="form.password" type="password" class="form-control " placeholder="Contraseña" required />
-        <button type="submit" class="btn btn-success">Iniciar Sesión</button>
+        <button type="submit" class="btn btn-success">Registrarse</button>
     </form>
     <div id="alert" class="alert"></div>
 
