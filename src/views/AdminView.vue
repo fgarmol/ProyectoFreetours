@@ -18,7 +18,15 @@ const newUser = ref({
     cuentaHabilitada: 'true'
 });
 const editingUser = ref(null);
-//funcion para obtener todos los usuarios de la api  y mostrarlos en la tabla
+
+function showAlert(message, isSuccess = false) {
+    const alert = document.getElementById('alert');
+    alert.textContent = message;
+    alert.style.display = 'block';
+    alert.className = isSuccess ? 'alert success' : 'alert';
+}
+
+
 function cargarUsuarios() {
     
 
@@ -71,16 +79,37 @@ async function crearUsuario() {
         .catch(error => showAlert(`Error al crear el usuario: ${error.message}`, false));
 }
 
+// Función para eliminar un usuario
+function eliminarUsuario(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+        return;
+    }
+    fetch(`http://localhost/APIFreetours/api.php/usuarios?id=${id}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(responseData => {
+            showAlert('Usuario eliminado exitosamente', true);
+            cargarUsuarios();
+        })
+        .catch(error => showAlert(`Error al eliminar el usuario: ${error.message}`, false));
+}
 
 </script>
 
 <template>
-  <div class="container layout">
+  <div class="container">
     <h1>Usuarios</h1>
     <button class="btn btn-primary" @click="mostrarModalCrearUsuario">Crear Usuario</button>
     <table class="table">
         <thead>
             <tr>
+                <th>id</th>
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Contraseña</th>
@@ -90,19 +119,20 @@ async function crearUsuario() {
         </thead>
         <tbody>
             <tr v-for="usuario in users" :key="usuario.id">
+                <td>{{ usuario.id }}</td>
                 <td>{{ usuario.nombre }}</td>
                 <td>{{ usuario.email }}</td>
                 <td>{{ usuario.contraseña }}</td>
                 <td>{{ usuario.rol }}</td>
                 <td>
                     <button class="btn btn-primary">Editar</button>
-                    <button class="btn btn-danger">Eliminar</button>
+                    <button class="btn btn-danger" @click="eliminarUsuario(usuario.id)">Eliminar</button>
                 </td>
             </tr>
         </tbody>
     </table>
   </div>
-  <div class="modal" :class="{ 'd-block': showModalCrearUsuario }" tabindex="-1" role="dialog">
+  <!-- <div class="modal" :class="{ 'd-block': showModalCrearUsuario }" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -131,16 +161,17 @@ async function crearUsuario() {
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Crear</button>
-                </form>
+                </form> 
                 
 
 
                    
                         
 
-  </div>
+  </div> -->
 
-  
+  <div id="alert" class="alert"></div>
+
 
     
 </template>
@@ -150,7 +181,11 @@ footer{
  position:sticky;
 }
 
-
+.container {
+  flex: 1; /* Hace que el contenedor ocupe todo el espacio disponible */
+  overflow-y: auto; /* Permite el desplazamiento si el contenido se desborda */
+  padding: 20px; /* Opcional, agrega espacio alrededor del contenido */
+}
 
 
 
