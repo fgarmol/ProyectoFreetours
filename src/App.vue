@@ -34,4 +34,9 @@ function actualizaDatosSesion(usuario) {
   flex-direction: column;
   height: 100vh;
 }
+
+
+
+
+
 </style>

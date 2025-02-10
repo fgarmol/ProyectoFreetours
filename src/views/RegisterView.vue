@@ -26,6 +26,8 @@ const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: f
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
+    console.log(response.text())
+    
     return response.json();
   })
   .then(responseData => {
@@ -40,8 +42,8 @@ const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: f
     }, 2000);
     
   })
-  .catch(error => showAlert(`Error al crear el alumno: ${error.message}`, false));
-
+  .catch(error => showAlert(`Error al crear el alumno: Usuario ya registrado o no disponible`, false));
+  //cambiar esto para  no indicar que ha pasado en caso de que el error se deba a que ese mail ya está siendo utilizado
 }
 
 
