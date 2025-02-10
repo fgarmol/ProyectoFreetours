@@ -12,7 +12,7 @@ const form = ref({ nombre: '', mail: '', password: '' });
     }
 
 
-async function RegistrarUsuario() {
+/* async function RegistrarUsuario() {
 const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: form.value.password };
   
   fetch("http://localhost/APIFreetours/api.php/usuarios", {
@@ -42,13 +42,13 @@ const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: f
     }, 2000);
     
   })
-  .catch(error => showAlert(`Error al crear el alumno: Usuario ya registrado o no disponible`, false));
+  .catch(error => showAlert(`Error al crear el alumno: ${error.textContent}`, false));
   //cambiar esto para  no indicar que ha pasado en caso de que el error se deba a que ese mail ya está siendo utilizado
-}
+} */
 
 
 
-/* async function RegistrarUsuario() {
+function RegistrarUsuario() {
   const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: form.value.password };
 
   fetch("http://localhost/APIFreetours/api.php/usuarios", {
@@ -84,7 +84,7 @@ const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: f
     }
   })
   .catch(error => showAlert(`Error al crear el alumno: ${error.message}`, false));
-} */
+}
 
 </script>
 <template>
