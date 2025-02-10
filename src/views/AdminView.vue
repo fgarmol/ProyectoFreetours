@@ -45,11 +45,7 @@ function cargarUsuarios() {
     .then(data => {
       users.value = data;
       console.log(data);
-      /* data.forEach(usuario => {
-          console.log(usuario);
-      
-
-    }); */
+    
     })
     .catch(error => showAlert(`Error al obtener usuarios: ${error.message}`));
 

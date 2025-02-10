@@ -1,4 +1,5 @@
 <script setup>
+import router from '@/router';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -10,6 +11,8 @@ const emit = defineEmits(["sesionCerrada"]);
 function cerrarSesion() {
   // Emitir el evento para notificar al componente padre que la sesión se ha cerrado
   emit('sesionCerrada', null);
+  // Redirigir al usuario a la página de inicio
+  router.push('/');
 }
 </script>
 
