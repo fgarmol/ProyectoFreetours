@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 
-defineProps({
-    datos: Object
+const props = defineProps({
+    datos: Object,
+    
 });
 
 </script>
@@ -16,26 +17,15 @@ defineProps({
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav m-auto">
-                <!-- <li v-if="datos?.rol == 'profe'" class="nav-item active">
-                    <a class="nav-link" href="#">Preguntas </a>
-                </li>
-                <li v-if="datos?.rol == 'profe'" class="nav-item">
-                    <a class="nav-link" href="#">Categorias</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Examenes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Resultados</a>
-                </li> -->
                 <li class="nav-link">
                 <RouterLink class="nav-link" to="/">Home</RouterLink>
             </li>
             <li class="nav-link">
                 <RouterLink class="nav-link" to="/login">Login</RouterLink>
             </li>
-            <li class="nav-link">
-                <RouterLink class="nav-link" to="/admin">admin</RouterLink>
+            <!-- se mostrará la seccion de Admin si el rol del usuario es Admin -->
+            <li class="nav-link" v-if="datos?.autenticado && datos?.usuario.rol =='admin'">
+                <RouterLink class="nav-link" to="/admin">Admin</RouterLink>
             </li>
             </ul>
            
