@@ -168,7 +168,7 @@ function eliminarUsuario(id) {
             </select>
           </td>
           <td>
-            <button class="btn btn-primary" @click="editarUsuario(usuario.id)">Editar</button>
+            
             <button class="btn btn-danger" @click="eliminarUsuario(usuario.id)">Eliminar</button>
           </td>
         </tr>
