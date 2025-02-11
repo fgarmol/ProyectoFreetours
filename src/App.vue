@@ -7,21 +7,30 @@ import NavBar from './components/NavBar.vue';
 import { ref } from 'vue';
 import router from './router';
 
-// Inicializar la sesión como un objeto vacío
-const sesion = ref({ autenticado: false, usuario: null });
 
+
+const sesion = ref({ autenticado: false, usuario: null });
+if (localStorage.getItem('sesion')) {
+  sesion.value = JSON.parse(localStorage.getItem('sesion'));
+}
+
+
+
+// Función para actualizar los datos de la sesión
 function actualizaDatosSesion(usuario) {
   if (usuario) {
     sesion.value = { autenticado: true, usuario: usuario };
+    localStorage.setItem('sesion', JSON.stringify(sesion.value));
   } else {
     sesion.value = { autenticado: false, usuario: null };
+    localStorage.removeItem('sesion');
   }
 }
 </script>
 
 <template>
   <div class="layout">
-    <Header :usuarioAutenticado="sesion" @sesionCerrada="actualizaDatosSesion" title="Aplicacion Juana" />
+    <Header :usuarioAutenticado="sesion" @sesionCerrada="actualizaDatosSesion" title="Aplicación Freetours" />
     <NavBar :datos="sesion" />
     <RouterView :usuarioAutenticado="sesion" @sesionIniciada="actualizaDatosSesion"></RouterView>
     <Footer />
