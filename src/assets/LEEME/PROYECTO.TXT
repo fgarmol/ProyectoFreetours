@@ -1,0 +1,30 @@
+--------------------
+FUNCIONALIDAD MÍNIMA
+--------------------
+GESTIÓN DE USUARIOS: 
+    - Login
+    - Registro
+    - Listar y eliminar usuarios desde administración
+    - Modificar rol desde administración
+
+GESTIÓN DE RUTAS:
+    - Creación de rutas
+    - Listado de rutas con opción de eliminar
+    - Asignación de guía a ruta durante y/o despúes de crear
+
+GESTIÓN DE RESERVAS
+    - Ver lista de rutas filtrada (index)
+    - Ver info de ruta con opción de reservar 
+    - Crear reserva
+    - Listar reservas con opción de cancelar
+
+----------
+PARA NOTA: 
+----------
+    
+    - Listar las asignaciones del guía
+    - Pasar lista de una ruta como guía
+    - Modificar la reserva para cambiar el número de asistentes
+    - Listar rutas realizadas con opción de valorar
+    - Obtener la media de valoraciones de la ruta cuando se liste la rutas en el guía 
+    - Duplicar ruta en otra fecha

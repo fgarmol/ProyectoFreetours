@@ -45,7 +45,7 @@ function cargarUsuarios() {
     .then(data => {
       users.value = data;
       console.log(data);
-    
+
     })
     .catch(error => showAlert(`Error al obtener usuarios: ${error.message}`));
 
@@ -81,17 +81,39 @@ function crearUsuario() {
     .catch(error => showAlert(`Error al crear el usuario: ${error.message}`, false));
 }
 
-function editarUsuario(id) {
-  const usuario = users.value.find(usuario => usuario.id === id);
-  if (!usuario) {
-    showAlert('Usuario no encontrado', false);
-    return;
-  }
+//funcion para editar el rol del usuario
+/* Para actualizar el rol de un usuario (por ejemplo, cambiar a guía), puedes usar este código:
 
-  newUser.value = { ...usuario };
-  editingUser.value = usuario;
-  showModalCrearUsuario.value = true;
+const updatedRole = {
+    rol: 'admin'
+};
+
+fetch('http://localhost/api.php/usuarios?id=1', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedRole)
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error)); */
+function actualizarRol(usuario) {
+  const updatedRole = {
+    rol: usuario.rol
+  };
+  fetch(`http://localhost/APIFreetours/api.php/usuarios?id=${usuario.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedRole)
+  })
+    .then(response => response.json())
+    .then(data => console.log('Respuesta:', data))
+    .catch(error => console.error('Error:', error));
 }
+
 
 // Función para eliminar un usuario
 function eliminarUsuario(id) {
@@ -138,7 +160,13 @@ function eliminarUsuario(id) {
           <td>{{ usuario.nombre }}</td>
           <td>{{ usuario.email }}</td>
           <td>{{ usuario.contraseña }}</td>
-          <td>{{ usuario.rol }}</td>
+          <td>
+            <select v-model="usuario.rol" @change="actualizarRol(usuario)">
+              <option value="admin">Administrador</option>
+              <option value="guia">Guía</option>
+              <option value="cliente">Cliente</option>
+            </select>
+          </td>
           <td>
             <button class="btn btn-primary" @click="editarUsuario(usuario.id)">Editar</button>
             <button class="btn btn-danger" @click="eliminarUsuario(usuario.id)">Eliminar</button>
