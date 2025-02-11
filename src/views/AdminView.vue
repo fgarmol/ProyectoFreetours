@@ -1,5 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import router from '@/router';
+const props = defineProps({
+  usuarioAutenticado: Object
+});
+
 
 const users = ref([]);
 const showModalCrearUsuario = ref(false);
@@ -51,7 +56,11 @@ function cargarUsuarios() {
 
 }
 onMounted(() => {
-  cargarUsuarios();
+  if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
+    cargarUsuarios();
+  }else{
+    router.push('/');
+  }
 });
 
 
@@ -81,23 +90,7 @@ function crearUsuario() {
     .catch(error => showAlert(`Error al crear el usuario: ${error.message}`, false));
 }
 
-//funcion para editar el rol del usuario
-/* Para actualizar el rol de un usuario (por ejemplo, cambiar a guía), puedes usar este código:
 
-const updatedRole = {
-    rol: 'admin'
-};
-
-fetch('http://localhost/api.php/usuarios?id=1', {
-    method: 'PUT',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(updatedRole)
-})
-.then(response => response.json())
-.then(data => console.log('Respuesta:', data))
-.catch(error => console.error('Error:', error)); */
 function actualizarRol(usuario) {
   const updatedRole = {
     rol: usuario.rol
@@ -168,7 +161,6 @@ function eliminarUsuario(id) {
             </select>
           </td>
           <td>
-            
             <button class="btn btn-danger" @click="eliminarUsuario(usuario.id)">Eliminar</button>
           </td>
         </tr>
