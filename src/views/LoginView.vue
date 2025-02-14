@@ -50,15 +50,16 @@ async function iniciarSesion() {
 </script>
 
 <template>
-    <form @submit.prevent="iniciarSesion" class="d-flex align-items-center gap-2 m-3">
+    <form @submit.prevent="iniciarSesion" class="m-3">
+        <div class="form-group">
         <label for="usuario">Mail</label>
         <input v-model="form.usuario" type="text" id="usuario" class="form-control" placeholder="Usuario" required />
-        <label for="password">Contraseña</label>
+        <label class="mt-3" for="password">Contraseña</label>
         <input v-model="form.password" type="password" class="form-control" placeholder="Contraseña" required />
-        <button type="submit" class="btn btn-success">Iniciar Sesión</button>
+        <button type="submit" class="btn btn-primary mt-3">Iniciar Sesión</button>
+    </div>
     </form>
     <div id="alert" style="display: none;"></div>
-    <!-- boton para ir al registro si no tiene cuenta -->
-     <label for="registrarse">No tienes cuenta?</label>
-    <router-link to="/register" class="btn btn-primary m-5 mt-0" id="registrarse">Registrarse</router-link>
+    
+    
 </template>

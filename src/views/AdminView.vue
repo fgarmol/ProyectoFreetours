@@ -225,6 +225,7 @@ footer {
   /* Hace que el contenedor ocupe todo el espacio disponible */
   overflow-y: auto;
   /* Permite el desplazamiento si el contenido se desborda */
+  padding-bottom: 3em;
 }
 
 body,

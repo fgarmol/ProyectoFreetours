@@ -24,9 +24,14 @@ function cerrarSesion() {
         <h1 class="mb-0">{{ title }}</h1>
       </div>
       <div class="actions d-flex align-items-center">
-        <router-link to="/login" class="btn btn-success ms-auto" v-if="!usuarioAutenticado.autenticado">
+        <router-link to="/login" class="btn btn-success ms-auto" v-if="!usuarioAutenticado.autenticado && $route.path !== '/login'">
           Iniciar sesión
         </router-link>
+
+        <router-link to="/register" class="btn btn-success ms-2" v-if="!usuarioAutenticado.autenticado && $route.path === '/login'">
+          Registrarse
+        </router-link>
+
         <div v-if="usuarioAutenticado.autenticado" class="d-flex align-items-center justify-content-end">
           <span class="me-3">Bienvenido, {{ usuarioAutenticado.usuario.nombre }} ({{ usuarioAutenticado.usuario.rol }})</span>
           <button @click.prevent="cerrarSesion" class="btn btn-danger">Cerrar Sesión</button>

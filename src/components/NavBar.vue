@@ -20,9 +20,9 @@ const props = defineProps({
                 <li class="nav-link">
                 <RouterLink class="nav-link" to="/">Home</RouterLink>
             </li>
-            <li class="nav-link">
+            <!-- <li class="nav-link">
                 <RouterLink class="nav-link" to="/login">Login</RouterLink>
-            </li>
+            </li> -->
             <!-- se mostrará la seccion de Admin si el rol del usuario es Admin -->
             <li class="nav-link" v-if="datos?.autenticado && datos?.usuario.rol =='admin'">
                 <RouterLink class="nav-link" to="/admin">Admin</RouterLink>

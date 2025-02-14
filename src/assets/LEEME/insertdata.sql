@@ -11,7 +11,7 @@ INSERT INTO usuarios (nombre, email, contraseña, rol) VALUES
 -- Insertar Rutas
 INSERT INTO rutas (titulo, localidad, descripcion, foto, fecha, hora, latitud, longitud) VALUES
 ('Ruta Histórica', 'Madrid', 'Visita por lugares emblemáticos.', 'historia.jpg', '2025-02-10', '10:00', 40.4168, -3.7038),
-('Ruta Cultural', 'Sevilla', 'Recorrido por el casco antiguo.', 'cultura.jpg', '2025-02-12', '16:00', 37.3891, -5.9845);
+('Ruta Cultural', 'Sevilla', 'Recorrido por el casco antiguo.', 'cultura.jpg', '2025-02-12', '16:00', 37.3891, -5.9845),
 ('Ruta Gastronómica', 'Barcelona', 'Descubre los sabores locales.', 'gastronomia.jpg', '2025-02-10', '12:00', 41.3874, 2.1686),
 ('Ruta de Tapas', 'Madrid', 'Un paseo por los mejores bares de tapas.', 'tapas.jpg', '2025-02-10', '19:00', 40.4168, -3.7038),
 ('Ruta Monumental', 'Granada', 'Explora la Alhambra y sus alrededores.', 'monumentos.jpg', '2025-02-12', '09:00', 37.1773, -3.5986),
@@ -36,6 +36,7 @@ INSERT INTO rutas (titulo, localidad, descripcion, foto, fecha, hora, latitud, l
 ('Ruta del Parque', 'Madrid', 'Recorrido por el Retiro y otros parques.', 'parque.jpg', '2025-03-02', '16:00', 40.4168, -3.7038),
 ('Ruta Alternativa', 'Bilbao', 'Descubre el arte urbano y rincones especiales.', 'alternativa.jpg', '2025-03-04', '10:00', 43.2630, -2.9340),
 ('Ruta de los Puentes', 'Toledo', 'Descubre los puentes históricos.', 'puentes.jpg', '2025-03-04', '15:00', 39.8628, -4.0273);
+
 
 
 

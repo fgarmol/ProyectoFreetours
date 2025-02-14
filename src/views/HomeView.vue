@@ -34,8 +34,10 @@ const toursOrdenados = computed(() => {
     ordenados.sort((a, b) => a.localidad.localeCompare(b.localidad));
   } else if (opcionOrden.value === 'attendees') {
     ordenados.sort((a, b) => b.asistentes - a.asistentes);
-  } else if (opcionOrden.value === 'random') {
+  } else if (opcionOrden.value === 'default') {
     ordenados.sort(() => Math.random() - 0.5);
+  } else if (opcionOrden.value === 'date') {
+    ordenados.sort((a, b) => a.fecha.localeCompare(b.fecha));
   }
   return ordenados;
 });
@@ -86,10 +88,10 @@ onMounted(() => {
         <div class="sorting">
           <label for="sort">Ordenar por:</label>
           <select id="sort" v-model="opcionOrden">
-            <option value="default">Por Defecto</option>
+            <option value="default">Mejores</option>
             <option value="alphabetical">Alfabético</option>
             <option value="attendees">Cantidad de Asistentes</option>
-            <option value="random">Aleatorio</option>
+            <option value="date">Fecha</option>
           </select>
           <span class="tour-count">{{ toursOrdenados.length }} rutas encontradas</span>
         </div>
@@ -106,7 +108,7 @@ onMounted(() => {
               <p>{{ tour.descripcion }}</p>
               <p>Duración: {{ tour.hora }}</p>
               <p>Operador: {{ tour.guia_nombre }}</p>
-              <p>Precio: {{ tour.precio ? tour.precio : 'Gratis' }}</p>
+              <p>Fecha: {{ tour.fecha }}</p>
               <button class="btn">Reservar</button>
             </div>
           </div>
