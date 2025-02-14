@@ -18,24 +18,17 @@ function cerrarSesion() {
 
 <template>
   <header class="header bg-dark text-white p-3">
-    <div class="container d-flex justify-content-between align-items-center">
+    <div class="container d-flex align-items-center justify-content-between">
       <div class="logo d-flex align-items-center">
         <img src="@/assets/img/logo.png" alt="Logo" class="logo-image me-2">
-        <h1>{{ title }}</h1>
+        <h1 class="mb-0">{{ title }}</h1>
       </div>
-      <!-- <nav class="nav">
-        <router-link to="/" class="nav-link">Inicio</router-link>
-        <router-link to="/paises" class="nav-link">Países</router-link>
-        <router-link to="/ciudades" class="nav-link">Ciudades</router-link>
-      </nav> -->
       <div class="actions d-flex align-items-center">
-
-        <button class="btn btn-primary me-2">Convertirse en Guía</button>
-        <router-link to="/login" class="btn btn-success me-2" v-if="!usuarioAutenticado.autenticado">Iniciar
-          sesión</router-link>
-        <div v-if="usuarioAutenticado.autenticado" class="d-flex align-items-center">
-          <span class="me-2">Bienvenido, {{ usuarioAutenticado.usuario.nombre }} ({{ usuarioAutenticado.usuario.rol
-            }})</span>
+        <router-link to="/login" class="btn btn-success ms-auto" v-if="!usuarioAutenticado.autenticado">
+          Iniciar sesión
+        </router-link>
+        <div v-if="usuarioAutenticado.autenticado" class="d-flex align-items-center justify-content-end">
+          <span class="me-3">Bienvenido, {{ usuarioAutenticado.usuario.nombre }} ({{ usuarioAutenticado.usuario.rol }})</span>
           <button @click.prevent="cerrarSesion" class="btn btn-danger">Cerrar Sesión</button>
         </div>
       </div>
@@ -53,8 +46,8 @@ function cerrarSesion() {
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 
 .logo-image {
@@ -63,17 +56,13 @@ function cerrarSesion() {
   margin-right: 1rem;
 }
 
-.nav {
-  display: flex;
-  gap: 1rem;
-}
-
 .actions {
   display: flex;
-  gap: 1rem;
+  align-items: center;
 }
+.container {
+  max-width: none !important;
+  margin: 0 ;
 
-.currency-selector {
-  margin-right: 1rem;
 }
 </style>
