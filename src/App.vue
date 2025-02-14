@@ -44,8 +44,4 @@ function actualizaDatosSesion(usuario) {
   height: 100vh;
 }
 
-
-
-
-
 </style>
