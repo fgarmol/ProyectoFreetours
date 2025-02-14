@@ -1,6 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import Header from '@/components/Header.vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
   title: String,
@@ -11,9 +10,14 @@ const props = defineProps({
 });
 
 const tours = ref([]);
+const paginaActual = ref(1);
+const itemsPorPagina = 15;
+const opcionOrden = ref('default'); // Por defecto a 'random'
 
 function cargarRutas() {
-  fetch('http://localhost/APIFreetours/api.php/rutas', {
+  let url = 'http://localhost/APIFreetours/api.php/rutas';
+
+  fetch(url, {
     method: 'GET',
   })
     .then(response => response.json())
@@ -24,6 +28,40 @@ function cargarRutas() {
     .catch(error => console.error('Error:', error));
 }
 
+const toursOrdenados = computed(() => {
+  let ordenados = [...tours.value];
+  if (opcionOrden.value === 'alphabetical') {
+    ordenados.sort((a, b) => a.localidad.localeCompare(b.localidad));
+  } else if (opcionOrden.value === 'attendees') {
+    ordenados.sort((a, b) => b.asistentes - a.asistentes);
+  } else if (opcionOrden.value === 'random') {
+    ordenados.sort(() => Math.random() - 0.5);
+  }
+  return ordenados;
+});
+
+const toursPaginados = computed(() => {
+  const inicio = (paginaActual.value - 1) * itemsPorPagina;
+  const fin = inicio + itemsPorPagina;
+  return toursOrdenados.value.slice(inicio, fin);
+});
+
+const totalPaginas = computed(() => {
+  return Math.ceil(toursOrdenados.value.length / itemsPorPagina);
+});
+
+function paginaSiguiente() {
+  if (paginaActual.value < totalPaginas.value) {
+    paginaActual.value++;
+  }
+}
+
+function paginaAnterior() {
+  if (paginaActual.value > 1) {
+    paginaActual.value--;
+  }
+}
+
 onMounted(() => {
   cargarRutas();
 });
@@ -31,32 +69,15 @@ onMounted(() => {
 
 <template>
   <div>
-    
-
-
-
-
     <div class="main-content">
       <!-- Filtros de búsqueda (Sidebar Filters) -->
       <aside class="sidebar">
         <div class="search">
           <input type="text" placeholder="Buscar destino">
-          <button class="search-btn">🔍</button>
         </div>
         <div class="filters">
           <label for="date">Fecha</label>
           <input type="date" id="date">
-          <label for="price">Rango de precios</label>
-          <input type="range" id="price" min="0" max="600">
-          <div class="rating-filters">
-            <button>Todos</button>
-            <button>9+</button>
-            <button>8+</button>
-            <button>7+</button>
-            <button>6+</button>
-          </div>
-          <label for="time">Hora de inicio</label>
-          <input type="time" id="time">
         </div>
       </aside>
 
@@ -64,19 +85,22 @@ onMounted(() => {
       <section class="tour-list">
         <div class="sorting">
           <label for="sort">Ordenar por:</label>
-          <select id="sort">
+          <select id="sort" v-model="opcionOrden">
             <option value="default">Por Defecto</option>
-            <option value="best-rated">Mejor Valorados</option>
-            <option value="most-booked">Más Reservados</option>
+            <option value="alphabetical">Alfabético</option>
+            <option value="attendees">Cantidad de Asistentes</option>
+            <option value="random">Aleatorio</option>
           </select>
+          <span class="tour-count">{{ toursOrdenados.length }} rutas encontradas</span>
         </div>
         <div class="tours">
-          <div class="tour-card" v-for="tour in tours" :key="tour.id">
-            <img :src="tour.foto" alt="" class="tour-image">
+          <div class="tour-card" v-for="tour in toursPaginados" :key="tour.id">
+            <img :src="tour.foto" :alt="tour.titulo" class="tour-image">
             <div class="tour-info">
               <span class="category">{{ tour.localidad }}</span>
               <h2>{{ tour.titulo }}</h2>
               <div class="rating">
+                <span class="stars">⭐⭐⭐⭐⭐</span>
                 <span class="reviews">({{ tour.asistentes }} asistentes)</span>
               </div>
               <p>{{ tour.descripcion }}</p>
@@ -87,32 +111,20 @@ onMounted(() => {
             </div>
           </div>
         </div>
+        <div class="pagination">
+          <button @click="paginaAnterior" :disabled="paginaActual === 1">Anterior</button>
+          <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+          <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas">Siguiente</button>
+        </div>
       </section>
     </div>
   </div>
 </template>
 
 <style scoped>
-.hero {
-  position: relative;
-  text-align: center;
-  color: white;
-}
-
-.hero-image {
-  width: 100%;
-  height: auto;
-}
-
-.hero-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .main-content {
   display: flex;
+  margin-bottom: 5rem; /* Añadir margen inferior para evitar que el footer tape el contenido */
 }
 
 .sidebar {
@@ -124,6 +136,17 @@ onMounted(() => {
 .tour-list {
   width: 75%;
   padding: 1rem;
+}
+
+.sorting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tour-count {
+  font-weight: bold;
 }
 
 .tour-card {
@@ -162,5 +185,16 @@ onMounted(() => {
 .reviews {
   margin-left: 0.5rem;
   color: #888;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  margin: 0 0.5rem;
 }
 </style>

@@ -19,24 +19,23 @@ function cerrarSesion() {
 <template>
   <header class="header bg-dark text-white p-3">
     <div class="container d-flex justify-content-between align-items-center">
-      <div class="logo">
+      <div class="logo d-flex align-items-center">
+        <img src="@/assets/img/logo.png" alt="Logo" class="logo-image me-2">
         <h1>{{ title }}</h1>
       </div>
-      <nav class="nav">
+      <!-- <nav class="nav">
         <router-link to="/" class="nav-link">Inicio</router-link>
         <router-link to="/paises" class="nav-link">Países</router-link>
         <router-link to="/ciudades" class="nav-link">Ciudades</router-link>
-      </nav>
+      </nav> -->
       <div class="actions d-flex align-items-center">
-        <select class="currency-selector form-select me-2">
-          <option value="EUR">EUR</option>
-          <option value="USD">USD</option>
-          <option value="GBP">GBP</option>
-        </select>
+
         <button class="btn btn-primary me-2">Convertirse en Guía</button>
-        <router-link to="/login" class="btn btn-success me-2" v-if="!usuarioAutenticado.autenticado">Iniciar sesión</router-link>
+        <router-link to="/login" class="btn btn-success me-2" v-if="!usuarioAutenticado.autenticado">Iniciar
+          sesión</router-link>
         <div v-if="usuarioAutenticado.autenticado" class="d-flex align-items-center">
-          <span class="me-2">Bienvenido, {{ usuarioAutenticado.usuario.nombre }} ({{ usuarioAutenticado.usuario.rol }})</span>
+          <span class="me-2">Bienvenido, {{ usuarioAutenticado.usuario.nombre }} ({{ usuarioAutenticado.usuario.rol
+            }})</span>
           <button @click.prevent="cerrarSesion" class="btn btn-danger">Cerrar Sesión</button>
         </div>
       </div>
@@ -56,6 +55,12 @@ function cerrarSesion() {
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.logo-image {
+  width: 60px;
+  height: auto;
+  margin-right: 1rem;
 }
 
 .nav {

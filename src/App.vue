@@ -30,7 +30,7 @@ function actualizaDatosSesion(usuario) {
 
 <template>
   <div class="layout">
-    <Header :usuarioAutenticado="sesion" @sesionCerrada="actualizaDatosSesion" title="Aplicación Freetours" />
+    <Header :usuarioAutenticado="sesion" @sesionCerrada="actualizaDatosSesion" title="NomadTrails" />
     <NavBar :datos="sesion" />
     <RouterView :usuarioAutenticado="sesion" @sesionIniciada="actualizaDatosSesion"></RouterView>
     <Footer />
