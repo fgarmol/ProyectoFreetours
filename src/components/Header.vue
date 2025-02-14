@@ -17,7 +17,7 @@ function cerrarSesion() {
 </script>
 
 <template>
-  <header class="header bg-dark text-white p-3">
+  <header class="header bg-dark text-white">
     <div class="container d-flex align-items-center justify-content-between">
       <div class="logo d-flex align-items-center">
         <img src="@/assets/img/logo.png" alt="Logo" class="logo-image me-2">
@@ -51,8 +51,8 @@ function cerrarSesion() {
 }
 
 .logo {
-  display: flex;
-  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .logo-image {
@@ -68,6 +68,7 @@ function cerrarSesion() {
 .container {
   max-width: none !important;
   margin: 0 ;
+  padding-bottom: 0;
 
 }
 </style>
