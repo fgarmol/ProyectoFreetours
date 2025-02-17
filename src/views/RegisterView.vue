@@ -1,4 +1,5 @@
 <script setup>
+import router from '@/router';
 import { ref } from 'vue';
 const form = ref({ nombre: '', mail: '', password: '' });
 
@@ -10,43 +11,6 @@ function showAlert(message, isSuccess = false) {
   alert.style.display = 'block';
   alert.className = isSuccess ? 'alert success' : 'alert';
 }
-
-
-/* async function RegistrarUsuario() {
-const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: form.value.password };
-  
-  fetch("http://localhost/APIFreetours/api.php/usuarios", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
-    }
-    console.log(response.text())
-    
-    return response.json();
-  })
-  .then(responseData => {
-    showAlert('Alumno creado exitosamente', true);
-   
-    form.value.nombre = '';
-    form.value.mail = '';
-    form.value.password = '';
-
-    setTimeout(() => {
-      location.href = '/login';
-    }, 2000);
-    
-  })
-  .catch(error => showAlert(`Error al crear el alumno: ${error.textContent}`, false));
-  //cambiar esto para  no indicar que ha pasado en caso de que el error se deba a que ese mail ya está siendo utilizado
-} */
-
-
 
 function RegistrarUsuario() {
   const data = { nombre: form.value.nombre, email: form.value.mail, contraseña: form.value.password };
@@ -75,7 +39,7 @@ function RegistrarUsuario() {
         form.value.password = '';
 
         setTimeout(() => {
-          location.href = '/login';
+          router.push('/login');
         }, 2000);
 
       } catch (e) {

@@ -13,6 +13,8 @@ const tours = ref([]);
 const paginaActual = ref(1);
 const itemsPorPagina = 15;
 const opcionOrden = ref('default'); // Por defecto a 'random'
+const localidadBusqueda = ref('');
+const fechaBusqueda = ref('');
 
 function cargarRutas() {
   let url = 'http://localhost/APIFreetours/api.php/rutas';
@@ -28,8 +30,14 @@ function cargarRutas() {
     .catch(error => console.error('Error:', error));
 }
 
+const toursFiltrados = computed(() => {
+  return tours.value.filter(tour => {
+    return tour.localidad.toLowerCase().includes(localidadBusqueda.value.toLowerCase());
+  });
+});
+
 const toursOrdenados = computed(() => {
-  let ordenados = [...tours.value];
+  let ordenados = [...toursFiltrados.value];
   if (opcionOrden.value === 'alphabetical') {
     ordenados.sort((a, b) => a.localidad.localeCompare(b.localidad));
   } else if (opcionOrden.value === 'attendees') {
@@ -75,11 +83,11 @@ onMounted(() => {
       <!-- Filtros de búsqueda (Sidebar Filters) -->
       <aside class="sidebar">
         <div class="search">
-          <input type="text" placeholder="Buscar destino">
+          <input type="text" placeholder="Buscar destino" v-model="localidadBusqueda">
         </div>
         <div class="filters">
           <label for="date">Fecha</label>
-          <input type="date" id="date">
+          <input type="date" id="date" v-model="fechaBusqueda">
         </div>
       </aside>
 
