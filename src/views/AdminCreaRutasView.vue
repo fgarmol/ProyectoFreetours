@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-const rutas = ref([]);
+/* const rutas = ref([]);*/
 const users = ref([]);
+const guias = ref([]);
 
 function showAlert(message, isSuccess = false) {
     const alert = document.getElementById('alert');
@@ -48,6 +49,7 @@ function cargarUsuarios() {
         .then(data => {
             users.value = data;
             console.log(data);
+            filtrarGuia();
         })
         .catch(error => showAlert(`Error al obtener usuarios: ${error.message}`));
 }
@@ -55,6 +57,10 @@ function cargarUsuarios() {
 onMounted(() => {
     cargarUsuarios();
 });
+
+function filtrarGuia() {
+  guias.value = users.value.filter(usuario => usuario.rol === 'guia');
+}
 
 function crearRuta() {
     const data = {
@@ -133,10 +139,17 @@ function crearRuta() {
             <label for="guia">Guía</label>
             <!-- tengo que arreglar esto -->
             <select class="form-control" id="guia" v-model="newRuta.guia_id">
-                <option v-for="guia in users.value" :key="guia.id">{{ guia.id }}</option>
+                <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Crear</button>
     </form>
     </div>
 </template>
+
+<style scoped>
+.container {
+    padding-bottom: 5rem;
+}
+
+</style>

@@ -22,6 +22,10 @@ const newUser = ref({
   contraseña: '',
   cuentaHabilitada: 'true'
 });
+
+const guias = ref([]);
+
+
 const editingUser = ref(null);
 
 function showAlert(message, isSuccess = false) {
@@ -89,6 +93,8 @@ function crearUsuario() {
     })
     .catch(error => showAlert(`Error al crear el usuario: ${error.message}`, false));
 }
+
+
 
 
 function actualizarRol(usuario) {
