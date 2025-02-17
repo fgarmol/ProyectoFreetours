@@ -157,7 +157,7 @@ function asignarGuia(id) {
                     <td>{{ ruta.longitud }}</td>
                     <td>{{ ruta.guia_id }}</td>
                     <td>
-                        <button @click="eliminarRuta(ruta.id)">Eliminar</button>
+                        <button @click="eliminarRuta(ruta.id)" class=" btn btn-danger" >Eliminar</button>
                     </td>
                 </tr>
             </tbody>

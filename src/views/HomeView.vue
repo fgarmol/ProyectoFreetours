@@ -31,6 +31,19 @@ function cargarRutas() {
 }
 
 const toursFiltrados = computed(() => {
+  if (!localidadBusqueda.value && !fechaBusqueda.value) {
+    return tours.value;
+  } else if (localidadBusqueda.value && fechaBusqueda.value) {
+    return tours.value.filter(tour => {
+      return tour.localidad.toLowerCase().includes(localidadBusqueda.value.toLowerCase()) && tour.fecha === fechaBusqueda.value;
+    });
+  } else if (fechaBusqueda.value) {
+    return tours.value.filter(tour => {
+      return tour.fecha === fechaBusqueda.value;
+    });
+  } 
+
+
   return tours.value.filter(tour => {
     return tour.localidad.toLowerCase().includes(localidadBusqueda.value.toLowerCase());
   });
