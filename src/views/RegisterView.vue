@@ -40,7 +40,7 @@ function RegistrarUsuario() {
 
         setTimeout(() => {
           router.push('/login');
-        }, 2000);
+        }, 1000);
 
       } catch (e) {
         console.error("La respuesta no es un JSON válido:", e);

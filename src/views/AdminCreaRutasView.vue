@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import router from '@/router';
 
 /* const rutas = ref([]);*/
 const users = ref([]);
@@ -93,6 +94,9 @@ function crearRuta() {
         .then(data => {
             showAlert('Ruta creada correctamente', true);
             clearForm();
+            setTimeout(() => {
+                router.push('/admin/rutas');
+            }, 1000);
         })
         .catch(error => showAlert(`Error al crear ruta: ${error.message}`));
 }

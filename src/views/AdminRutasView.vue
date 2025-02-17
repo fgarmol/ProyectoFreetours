@@ -64,21 +64,22 @@ onMounted(() => {
 });
 
 function eliminarRuta(id) {
-    fetch(`http://localhost/APIFreetours/api.php/rutas?id=${id}`, {
-        method: 'DELETE'
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            }
-            return response.json();
+    if (confirm('¿Estás seguro de que deseas eliminar esta ruta?')) {
+        fetch(`http://localhost/APIFreetours/api.php/rutas?id=${id}`, {
+            method: 'DELETE'
         })
-        .then(data => {
-            showAlert('Ruta eliminada correctamente', true);
-            cargarRutas();
-
-        })
-        .catch(error => showAlert(`Error al eliminar ruta: ${error.message}`));
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                showAlert('Ruta eliminada correctamente', true);
+                cargarRutas();
+            })
+            .catch(error => showAlert(`Error al eliminar ruta: ${error.message}`));
+    }
 }
 
 function crearRuta() {
