@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import router from '@/router';
 
 const rutas = ref([]);
 const showModalCrearRuta = ref(false);
@@ -126,7 +127,9 @@ function asignarGuia(id) {
 
     <div class="container">
         <h1>Administrar rutas</h1>
-        <button class="btn btn-primary" @click="mostrarModalCrearRuta">Crear ruta</button>
+        <div>
+        <router-link to="/admin/rutas/crearRuta" class="btn btn-primary">Crear ruta</router-link>
+        </div>
         <div id="alert" class="alert"></div>
         <table class="table">
             <thead>
@@ -158,7 +161,7 @@ function asignarGuia(id) {
                 </tr>
             </tbody>
         </table>
-        <div v-if="showModalCrearRuta" class="modal" style="display: block;">
+        <!-- <div v-if="showModalCrearRuta" class="modal" style="display: block;">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -210,8 +213,8 @@ function asignarGuia(id) {
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </div>-->
+    </div> 
 
 
 

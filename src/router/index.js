@@ -4,7 +4,9 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 
 import AdminView from '@/views/AdminView.vue'
-import AdminRutas from '@/views/AdminRutas.vue'
+import AdminRutas from '@/views/AdminRutasView.vue'
+import AdminCreaRutasView from '@/views/AdminCreaRutasView.vue'
+import AdminRutasView from '@/views/AdminRutasView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,10 +34,16 @@ const router = createRouter({
     {
       path: '/admin/rutas',
       name: 'AdminRutas',
-      component: AdminRutas
+      component: AdminRutasView
 
+    },
+    {
+      path: '/admin/rutas/CrearRuta',
+      name: 'CrearRuta',
+      component: AdminCreaRutasView
     }
   ],
+    
 })
 
 export default router
