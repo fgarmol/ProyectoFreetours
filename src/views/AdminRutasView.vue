@@ -5,15 +5,9 @@ import router from '@/router';
 const rutas = ref([]);
 const paginaActual = ref(1);
 const itemsPorPagina = 10; // Número de rutas por página
+const guias = ref([]);
 
-const showModalCrearRuta = ref(false);
-const mostrarModalCrearRuta = () => {
-    showModalCrearRuta.value = true;
-};
-const cerrarModalCrearRuta = () => {
-    clearForm();
-    showModalCrearRuta.value = false;
-};
+
 const loading = ref(true);
 
 const newRuta = {
@@ -35,17 +29,49 @@ function showAlert(message, isSuccess = false) {
     alert.className = isSuccess ? 'alert success' : 'alert';
 }
 
-function clearForm() {
-    newRuta.titulo = '';
-    newRuta.localidad = '';
-    newRuta.descripcion = '';
-    newRuta.foto = '';
-    newRuta.fecha = '';
-    newRuta.hora = '';
-    newRuta.latitud = '';
-    newRuta.longitud = '';
-    newRuta.guia_id = '';
+
+
+function cargarGuia(fecha) {
+    fetch(`http://localhost/APIFreetours/api.php/asignaciones?fecha=${fecha}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            guias.value = data;
+            console.log(data);
+        })
+        .catch(error => showAlert(`Error al cargar guías: ${error.message}`));
 }
+
+function asignarGuia(ruta) {
+    const data = {
+        guia_id: ruta.guia_id,
+        ruta_id: ruta.id
+    };
+    fetch("http://localhost/APIFreetours/api.php/asignaciones", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            console.log(response.text());
+            return response.json();
+        })
+        .then(data => {
+            showAlert('Guía asignado correctamente', true);
+            cargarGuia();
+        })
+        .catch(error => showAlert(`Error al asignar guía: ${error.message}`));
+}
+
 
 function cargarRutas() {
     fetch("http://localhost/APIFreetours/api.php/rutas")
@@ -58,6 +84,7 @@ function cargarRutas() {
         .then(data => {
             rutas.value = data;
             console.log(data);
+           cargarGuia();
         })
         .catch(error => showAlert(`Error al obtener rutas: ${error.message}`));
 }
@@ -85,18 +112,25 @@ function eliminarRuta(id) {
     }
 }
 
-function crearRuta() {
+function duplicarRuta(ruta) {
+
+    if (confirm('¿Estás seguro de que deseas duplicar esta ruta?')) {
+        
+    
+
     const data = {
-        titulo: newRuta.titulo,
-        localidad: newRuta.localidad,
-        descripcion: newRuta.descripcion,
-        foto: newRuta.foto,
-        fecha: newRuta.fecha,
-        hora: newRuta.hora,
-        latitud: newRuta.latitud,
-        longitud: newRuta.longitud,
-        guia_id: newRuta.guia_id
+        titulo: ruta.titulo,
+        localidad: ruta.localidad,
+        descripcion: ruta.descripcion,
+        foto: ruta.foto,
+        fecha: ruta.fecha,
+        hora: ruta.hora,
+        latitud: ruta.latitud,
+        longitud: ruta.longitud,
+        guia_id: ""
     };
+
+
     fetch("http://localhost/APIFreetours/api.php/rutas", {
         method: 'POST',
         headers: {
@@ -111,16 +145,16 @@ function crearRuta() {
             return response.json();
         })
         .then(data => {
-            showAlert('Ruta creada correctamente', true);
+            showAlert('Ruta duplicada correctamente', true);
             cargarRutas();
-            cerrarModalCrearRuta();
         })
-        .catch(error => showAlert(`Error al crear ruta: ${error.message}`));
+        .catch(error => showAlert(`Error al duplicar ruta: ${error.message}`));
+
+    }
 }
 
-function asignarGuia(id) {
-    newRuta.guia_id = id;
-}
+
+
 
 const rutasPaginadas = computed(() => {
     const inicio = (paginaActual.value - 1) * itemsPorPagina;
@@ -175,9 +209,15 @@ function paginaAnterior() {
                     <td>{{ ruta.hora }}</td>
                     <td>{{ ruta.latitud }}</td>
                     <td>{{ ruta.longitud }}</td>
-                    <td>{{ ruta.guia_id }}</td>
+                    <td>
+                        <select v-model="ruta.guia_id" >
+                            <option value="">Seleccionar guía</option>
+                            <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}</option>
+                        </select>
+                    </td>
                     <td>
                         <button @click="eliminarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
+                        <button @click="duplicarRuta(ruta)" class="btn btn-secondary">Duplicar</button>
                     </td>
                 </tr>
             </tbody>
