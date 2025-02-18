@@ -6,6 +6,9 @@ import 'leaflet/dist/leaflet.css';
 
 const users = ref([]);
 const guias = ref([]);
+const address = ref('');
+let map;
+let marker;
 
 function showAlert(message, isSuccess = false) {
     const alert = document.getElementById('alert');
@@ -90,9 +93,10 @@ function crearRuta() {
 }
 
 onMounted(() => {
-    const map = L.map('map').setView([51.505, -0.09], 13);
+    map = L.map('map').setView([40.4168, -3.7038], 13); // Madrid por defecto
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
         maxZoom: 19,
     }).addTo(map);
 
@@ -100,8 +104,32 @@ onMounted(() => {
         const { lat, lng } = e.latlng;
         newRuta.value.latitud = lat;
         newRuta.value.longitud = lng;
+        if (marker) marker.remove();
+        marker = L.marker([lat, lng]).addTo(map)
+            .bindPopup(`Lat: ${lat}, Lng: ${lng}`)
+            .openPopup();
     });
 });
+
+const searchLocation = async () => {
+    if (!address.value) return;
+    const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address.value)}`
+    );
+    const data = await response.json();
+    if (data.length > 0) {
+        const { lat, lon } = data[0];
+        if (marker) marker.remove();
+        marker = L.marker([lat, lon]).addTo(map)
+            .bindPopup(address.value)
+            .openPopup();
+        map.setView([lat, lon], 13);
+        newRuta.value.latitud = lat;
+        newRuta.value.longitud = lon;
+    } else {
+        showAlert('Dirección no encontrada', false);
+    }
+};
 </script>
 
 <template>
@@ -149,6 +177,8 @@ onMounted(() => {
             </div>
             <button type="submit" class="btn btn-primary">Crear</button>
         </form>
+        <input v-model="address" @keyup.enter="searchLocation" placeholder="Buscar dirección" class="input" />
+        <button @click="searchLocation" class="btn btn-secondary">Buscar</button>
         <div id="map"></div>
     </div>
 </template>
