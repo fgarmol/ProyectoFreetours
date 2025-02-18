@@ -1,8 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import router from '@/router';
 
 const rutas = ref([]);
+const paginaActual = ref(1);
+const itemsPorPagina = 10; // Número de rutas por página
+
 const showModalCrearRuta = ref(false);
 const mostrarModalCrearRuta = () => {
     showModalCrearRuta.value = true;
@@ -119,17 +122,34 @@ function asignarGuia(id) {
     newRuta.guia_id = id;
 }
 
+const rutasPaginadas = computed(() => {
+    const inicio = (paginaActual.value - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    return rutas.value.slice(inicio, fin);
+});
 
+const totalPaginas = computed(() => {
+    return Math.ceil(rutas.value.length / itemsPorPagina);
+});
 
+function paginaSiguiente() {
+    if (paginaActual.value < totalPaginas.value) {
+        paginaActual.value++;
+    }
+}
 
+function paginaAnterior() {
+    if (paginaActual.value > 1) {
+        paginaActual.value--;
+    }
+}
 </script>
 
 <template>
-
     <div class="container">
         <h1>Administrar rutas</h1>
         <div>
-        <router-link to="/admin/rutas/crearRuta" class="btn btn-primary">Crear ruta</router-link>
+            <router-link to="/admin/rutas/crearRuta" class="btn btn-primary">Crear ruta</router-link>
         </div>
         <div id="alert" class="alert"></div>
         <table class="table">
@@ -147,7 +167,7 @@ function asignarGuia(id) {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="ruta in rutas" :key="ruta.id">
+                <tr v-for="ruta in rutasPaginadas" :key="ruta.id">
                     <td>{{ ruta.titulo }}</td>
                     <td>{{ ruta.localidad }}</td>
                     <td>{{ ruta.descripcion }}</td>
@@ -157,73 +177,32 @@ function asignarGuia(id) {
                     <td>{{ ruta.longitud }}</td>
                     <td>{{ ruta.guia_id }}</td>
                     <td>
-                        <button @click="eliminarRuta(ruta.id)" class=" btn btn-danger" >Eliminar</button>
+                        <button @click="eliminarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <!-- <div v-if="showModalCrearRuta" class="modal" style="display: block;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Crear ruta</h5>
-                        <button @click="cerrarModalCrearRuta" type="button" class="btn-close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form @submit.prevent="crearRuta" class="form">
-                            <div class="mb-3">
-                                <label class="form-label" for="titulo">Titulo</label>
-                                <input v-model="newRuta.titulo" type="text" id="titulo" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="localidad">Localidad</label>
-                                <input v-model="newRuta.localidad" type="text" id="localidad" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="descripcion">Descripcion</label>
-                                <input v-model="newRuta.descripcion" type="text" id="descripcion" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="foto">Foto</label>
-                                <input v-model="newRuta.foto" type="text" id="foto" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="fecha">Fecha</label>
-                                <input v-model="newRuta.fecha" type="date" id="fecha" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="hora">Hora</label>
-                                <input v-model="newRuta.hora" type="time" id="hora" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="latitud">Latitud</label>
-                                <input v-model="newRuta.latitud" type="text" id="latitud" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="longitud">Longitud</label>
-                                <input v-model="newRuta.longitud" type="text" id="longitud" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="guia">Guia</label>
-                                <select v-model="newRuta.guia_id" id="guia" class="form-select">
-                                    <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Crear</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>-->
-    </div> 
-
-
-
-
+        <div class="pagination">
+            <button @click="paginaAnterior" :disabled="paginaActual === 1">Anterior</button>
+            <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas">Siguiente</button>
+        </div>
+    </div>
 </template>
 
-<style scooped>
+<style scoped>
 .container {
     padding-bottom: 5rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.pagination button {
+    margin: 0 0.5rem;
 }
 </style>

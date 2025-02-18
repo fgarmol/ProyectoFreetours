@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import router from '@/router';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-/* const rutas = ref([]);*/
 const users = ref([]);
 const guias = ref([]);
 
@@ -39,8 +40,8 @@ function clearForm() {
     };
 }
 
-function cargarUsuarios() {
-    fetch("http://localhost/APIFreetours/api.php/usuarios")
+function cargarGuia() {
+    fetch(`http://localhost/APIFreetours/api.php/asignaciones?fecha=${newRuta.value.fecha}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -48,19 +49,9 @@ function cargarUsuarios() {
             return response.json();
         })
         .then(data => {
-            users.value = data;
-            console.log(data);
-            filtrarGuia();
+            guias.value = data;
         })
-        .catch(error => showAlert(`Error al obtener usuarios: ${error.message}`));
-}
-
-onMounted(() => {
-    cargarUsuarios();
-});
-
-function filtrarGuia() {
-  guias.value = users.value.filter(usuario => usuario.rol === 'guia');
+        .catch(error => showAlert(`Error al cargar guías: ${error.message}`));
 }
 
 function crearRuta() {
@@ -86,10 +77,7 @@ function crearRuta() {
             if (!response.ok) {
                 throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
-            
             return response.json();
-            
-            
         })
         .then(data => {
             showAlert('Ruta creada correctamente', true);
@@ -100,54 +88,68 @@ function crearRuta() {
         })
         .catch(error => showAlert(`Error al crear ruta: ${error.message}`));
 }
+
+onMounted(() => {
+    const map = L.map('map').setView([51.505, -0.09], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
+
+    map.on('click', function(e) {
+        const { lat, lng } = e.latlng;
+        newRuta.value.latitud = lat;
+        newRuta.value.longitud = lng;
+    });
+});
 </script>
 
 <template>
     <div class="container">
         <div id="alert" class="alert"></div>
-        <h1 class="m-3">Crear Ruta</h1>
-    <form @submit.prevent="crearRuta" class="form m-3">
-        <div class="form-group">
-            <label for="titulo">Título</label>
-            <input type="text" class="form-control" id="titulo" v-model="newRuta.titulo">
-        </div>
-        <div class="form-group">
-            <label for="localidad">Localidad</label>
-            <input type="text" class="form-control" id="localidad" v-model="newRuta.localidad">
-        </div>
-        <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <textarea class="form-control" id="descripcion" rows="3" v-model="newRuta.descripcion"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="foto">Foto</label>
-            <input type="text" class="form-control" id="foto" v-model="newRuta.foto">
-        </div>
-        <div class="form-group">
-            <label for="fecha">Fecha</label>
-            <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha">
-        </div>
-        <div class="form-group">
-            <label for="hora">Hora</label>
-            <input type="time" class="form-control" id="hora" v-model="newRuta.hora">
-        </div>
-        <div class="form-group">
-            <label for="latitud">Latitud</label>
-            <input type="text" class="form-control" id="latitud" v-model="newRuta.latitud">
-        </div>
-        <div class="form-group">
-            <label for="longitud">Longitud</label>
-            <input type="text" class="form-control" id="longitud" v-model="newRuta.longitud">
-        </div>
-        <div class="form-group">
-            <label for="guia">Guía</label>
-            <!-- tengo que arreglar esto -->
-            <select class="form-control" id="guia" v-model="newRuta.guia_id">
-                <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Crear</button>
-    </form>
+        <h1 class="m-3 mt-1">Crear Ruta</h1>
+        <form @submit.prevent="crearRuta" class="form m-3">
+            <div class="form-group">
+                <label for="titulo">Título</label>
+                <input type="text" class="form-control" id="titulo" v-model="newRuta.titulo">
+            </div>
+            <div class="form-group">
+                <label for="localidad">Localidad</label>
+                <input type="text" class="form-control" id="localidad" v-model="newRuta.localidad">
+            </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <textarea class="form-control" id="descripcion" rows="3" v-model="newRuta.descripcion"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="foto">Foto</label>
+                <input type="text" class="form-control" id="foto" placeholder="URL" v-model="newRuta.foto">
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha" @change="cargarGuia(newRuta.fecha)">
+            </div>
+            <div class="form-group">
+                <label for="hora">Hora</label>
+                <input type="time" class="form-control" id="hora" v-model="newRuta.hora">
+            </div>
+            <div class="form-group">
+                <label for="latitud">Latitud</label>
+                <input type="text" class="form-control" id="latitud" v-model="newRuta.latitud">
+            </div>
+            <div class="form-group">
+                <label for="longitud">Longitud</label>
+                <input type="text" class="form-control" id="longitud" v-model="newRuta.longitud">
+            </div>
+            <div class="form-group">
+                <label for="guia">Guía</label>
+                <select class="form-control" id="guia" v-model="newRuta.guia_id">
+                    <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Crear</button>
+        </form>
+        <div id="map"></div>
     </div>
 </template>
 
@@ -156,4 +158,12 @@ function crearRuta() {
     padding-bottom: 5rem;
 }
 
+#map {
+    height: 300px;
+    margin-top: 1rem;
+
+}
+.footer{
+    z-index: 5000;
+}
 </style>

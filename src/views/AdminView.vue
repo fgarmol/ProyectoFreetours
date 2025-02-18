@@ -1,21 +1,25 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import router from '@/router';
+
 const props = defineProps({
   usuarioAutenticado: Object
 });
 
-
 const users = ref([]);
+const paginaActual = ref(1);
+const itemsPorPagina = 10; // Número de usuarios por página
 const showModalCrearUsuario = ref(false);
+
 const mostrarModalCrearUsuario = () => {
   showModalCrearUsuario.value = true;
 };
+
 const cerrarModalCrearUsuario = () => {
   clearForm();
   showModalCrearUsuario.value = false;
 };
-const loading = ref(true);
+
 const newUser = ref({
   nombre: '',
   email: '',
@@ -23,27 +27,20 @@ const newUser = ref({
   cuentaHabilitada: 'true'
 });
 
-const guias = ref([]);
-
-
-const editingUser = ref(null);
-
 function showAlert(message, isSuccess = false) {
   const alert = document.getElementById('alert');
   alert.textContent = message;
   alert.style.display = 'block';
   alert.className = isSuccess ? 'alert success' : 'alert';
 }
+
 function clearForm() {
   newUser.value.nombre = '';
   newUser.value.email = '';
   newUser.value.contraseña = '';
 }
 
-
 function cargarUsuarios() {
-
-
   fetch("http://localhost/APIFreetours/api.php/usuarios")
     .then(response => {
       if (!response.ok) {
@@ -54,19 +51,17 @@ function cargarUsuarios() {
     .then(data => {
       users.value = data;
       console.log(data);
-
     })
     .catch(error => showAlert(`Error al obtener usuarios: ${error.message}`));
-
 }
+
 onMounted(() => {
   if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
     cargarUsuarios();
-  }else{
+  } else {
     router.push('/');
   }
 });
-
 
 function crearUsuario() {
   const data = { nombre: newUser.value.nombre, email: newUser.value.email, contraseña: newUser.value.contraseña, rol: 'usuario' };
@@ -94,9 +89,6 @@ function crearUsuario() {
     .catch(error => showAlert(`Error al crear el usuario: ${error.message}`, false));
 }
 
-
-
-
 function actualizarRol(usuario) {
   const updatedRole = {
     rol: usuario.rol
@@ -113,8 +105,6 @@ function actualizarRol(usuario) {
     .catch(error => console.error('Error:', error));
 }
 
-
-// Función para eliminar un usuario
 function eliminarUsuario(id) {
   if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
     return;
@@ -135,6 +125,27 @@ function eliminarUsuario(id) {
     .catch(error => showAlert(`Error al eliminar el usuario: ${error.message}`, false));
 }
 
+const usuariosPaginados = computed(() => {
+  const inicio = (paginaActual.value - 1) * itemsPorPagina;
+  const fin = inicio + itemsPorPagina;
+  return users.value.slice(inicio, fin);
+});
+
+const totalPaginas = computed(() => {
+  return Math.ceil(users.value.length / itemsPorPagina);
+});
+
+function paginaSiguiente() {
+  if (paginaActual.value < totalPaginas.value) {
+    paginaActual.value++;
+  }
+}
+
+function paginaAnterior() {
+  if (paginaActual.value > 1) {
+    paginaActual.value--;
+  }
+}
 </script>
 
 <template>
@@ -154,7 +165,7 @@ function eliminarUsuario(id) {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="usuario in users" :key="usuario.id">
+        <tr v-for="usuario in usuariosPaginados" :key="usuario.id">
           <td>{{ usuario.id }}</td>
           <td>{{ usuario.nombre }}</td>
           <td>{{ usuario.email }}</td>
@@ -172,14 +183,12 @@ function eliminarUsuario(id) {
         </tr>
       </tbody>
     </table>
+    <div class="pagination">
+      <button @click="paginaAnterior" :disabled="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas">Siguiente</button>
+    </div>
   </div>
-
-
-
-
-
-
-
 
   <div v-if="showModalCrearUsuario" class="modal" style="display: block;">
     <div class="modal-dialog">
@@ -208,30 +217,20 @@ function eliminarUsuario(id) {
       </div>
     </div>
   </div>
-
-
-
-
-
-
 </template>
 
 <style scoped>
 footer {
   margin-top: auto;
-  /* Empuja el footer hacia abajo */
   background-color: #f1f1f1;
-  /* Puedes cambiarlo al color que desees */
   text-align: center;
   padding: 10px;
 }
 
 .container {
   flex: 1;
-  /* Hace que el contenedor ocupe todo el espacio disponible */
   overflow-y: auto;
-  /* Permite el desplazamiento si el contenido se desborda */
-  padding-bottom: 3em;
+  padding-bottom: 5em;
 }
 
 body,
@@ -245,6 +244,16 @@ html {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  /* Hace que el layout ocupe toda la altura de la pantalla */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  margin: 0 0.5rem;
 }
 </style>

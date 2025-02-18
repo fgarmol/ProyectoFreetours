@@ -173,6 +173,7 @@ onMounted(() => {
 }
 
 .tour-card {
+  display: flex; /* Cambia el diseño a flexbox */
   border: 1px solid #ddd;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -182,8 +183,11 @@ onMounted(() => {
 }
 
 .tour-image {
-  width: 100%;
-  height: auto;
+  width: 150px; /* Ajusta el ancho según tus necesidades */
+  height: auto; /* Mantén la proporción de la imagen */
+  object-fit: cover; /* Asegura que la imagen cubra el contenedor sin distorsionarse */
+  border-radius: 8px; /* Opcional: añade bordes redondeados */
+  margin-right: 1rem; /* Añade espacio entre la imagen y la información */
 }
 
 .tour-info {
