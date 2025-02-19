@@ -41,7 +41,7 @@ const toursFiltrados = computed(() => {
     return tours.value.filter(tour => {
       return tour.fecha === fechaBusqueda.value;
     });
-  } 
+  }
 
 
   return tours.value.filter(tour => {
@@ -130,7 +130,10 @@ onMounted(() => {
               <p>Duración: {{ tour.hora }}</p>
               <p>Operador: {{ tour.guia_nombre }}</p>
               <p>Fecha: {{ tour.fecha }}</p>
-              <button class="btn">Reservar</button>
+              <router-link :to="'/rutas/' + tour.id">
+                <button class="reserve-button">Reservar</button>
+              </router-link>
+
             </div>
           </div>
         </div>
@@ -147,7 +150,7 @@ onMounted(() => {
 <style scoped>
 .main-content {
   display: flex;
-  margin-bottom: 5rem; /* Añadir margen inferior para evitar que el footer tape el contenido */
+  margin-bottom: 5rem;
 }
 
 .sidebar {
@@ -173,7 +176,8 @@ onMounted(() => {
 }
 
 .tour-card {
-  display: flex; /* Cambia el diseño a flexbox */
+  display: flex;
+  /* Cambia el diseño a flexbox */
   border: 1px solid #ddd;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -183,11 +187,16 @@ onMounted(() => {
 }
 
 .tour-image {
-  width: 150px; /* Ajusta el ancho según tus necesidades */
-  height: auto; /* Mantén la proporción de la imagen */
-  object-fit: cover; /* Asegura que la imagen cubra el contenedor sin distorsionarse */
-  border-radius: 8px; /* Opcional: añade bordes redondeados */
-  margin-right: 1rem; /* Añade espacio entre la imagen y la información */
+  width: 150px;
+  /* Ajusta el ancho según tus necesidades */
+  height: auto;
+  /* Mantén la proporción de la imagen */
+  object-fit: cover;
+  /* Asegura que la imagen cubra el contenedor sin distorsionarse */
+  border-radius: 8px;
+  /* Opcional: añade bordes redondeados */
+  margin-right: 1rem;
+  /* Añade espacio entre la imagen y la información */
 }
 
 .tour-info {

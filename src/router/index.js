@@ -7,6 +7,7 @@ import AdminView from '@/views/AdminView.vue'
 import AdminRutas from '@/views/AdminRutasView.vue'
 import AdminCreaRutasView from '@/views/AdminCreaRutasView.vue'
 import AdminRutasView from '@/views/AdminRutasView.vue'
+import RutasView from '@/views/RutasView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,7 +42,12 @@ const router = createRouter({
       path: '/admin/rutas/CrearRuta',
       name: 'CrearRuta',
       component: AdminCreaRutasView
-    }
+    }, 
+    {
+      path: '/rutas/:id',
+      name: 'ruta',
+      component: RutasView 
+    },
   ],
     
 })
