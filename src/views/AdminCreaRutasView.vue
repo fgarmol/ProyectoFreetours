@@ -15,7 +15,7 @@ function showAlert(message, isSuccess = false) {
     alert.textContent = message;
     alert.style.display = 'block';
     alert.className = isSuccess ? 'alert success' : 'alert';
-}   
+}
 
 const newRuta = ref({
     titulo: '',
@@ -100,7 +100,7 @@ onMounted(() => {
         maxZoom: 19,
     }).addTo(map);
 
-    map.on('click', function(e) {
+    map.on('click', function (e) {
         const { lat, lng } = e.latlng;
         newRuta.value.latitud = lat;
         newRuta.value.longitud = lng;
@@ -155,7 +155,8 @@ const searchLocation = async () => {
             </div>
             <div class="form-group">
                 <label for="fecha">Fecha</label>
-                <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha" @change="cargarGuia(newRuta.fecha)">
+                <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha"
+                    @change="cargarGuia(newRuta.fecha)">
             </div>
             <div class="form-group">
                 <label for="hora">Hora</label>
@@ -172,14 +173,21 @@ const searchLocation = async () => {
             <div class="form-group">
                 <label for="guia">Guía</label>
                 <select class="form-control" id="guia" v-model="newRuta.guia_id">
-                    <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}</option>
+                    <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}
+                    </option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Crear</button>
+
+
+            <div class="form-group mt-3">
+                <input v-model="address" @keyup.enter="searchLocation" placeholder="Buscar dirección"
+                    class="input " />
+                <button @click="searchLocation" class="btn btn-secondary">Buscar</button>
+                <div id="map"></div>
+            </div>
         </form>
-        <input v-model="address" @keyup.enter="searchLocation" placeholder="Buscar dirección" class="input" />
-        <button @click="searchLocation" class="btn btn-secondary">Buscar</button>
-        <div id="map"></div>
+
     </div>
 </template>
 
@@ -193,7 +201,8 @@ const searchLocation = async () => {
     margin-top: 1rem;
 
 }
-.footer{
+
+.footer {
     z-index: 5000;
 }
 </style>
