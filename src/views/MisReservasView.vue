@@ -19,15 +19,26 @@ const reservasFuturas = ref([]);
 
 
 function obtenerReservas() {
-    fetch(`http://localhost/APIFreetours/api.php/reservas?email=${props.usuarioAutenticado.usuario.email}`, {
+    const userEmail = props.usuarioAutenticado.usuario.email;
+    console.log('Email:', userEmail);
+    fetch(`http://localhost/APIFreetours/api.php/reservas?email=${userEmail}`, {
         method: 'GET',
     })
         .then(response => response.json())
         .then(data => {
             console.log('Reservas:', data);
             reservas.value = data;
-            reservasPasadas.value = data.filter(reserva => new Date(reserva.fecha) < new Date());
-            reservasFuturas.value = data.filter(reserva => new Date(reserva.fecha) >= new Date());
+            reservasFuturas.value = reservas.value.filter(reserva => {
+                const fechaReserva = new Date(reserva.ruta_fecha);
+                const fechaActual = new Date();
+                return fechaReserva >= fechaActual;
+            });
+
+            reservasPasadas.value = reservas.value.filter(reserva => {
+                const fechaReserva = new Date(reserva.ruta_fecha);
+                const fechaActual = new Date();
+                return fechaReserva < fechaActual;
+            });
         })
         .catch(error => console.error('Error:', error));
 }
@@ -35,80 +46,55 @@ function obtenerReservas() {
 onMounted(() => {
     obtenerReservas();
 });
-
-
-/* 2. Obtener las reservas de un usuario específico por su email (GET)
-const userEmail = 'usuario@ejemplo.com'; // Email del usuario
-fetch(`http://localhost/api.php/reservas?email=${userEmail}`, {
-    method: 'GET',
-})
-.then(response => response.json())
-.then(data => console.log('Reservas del usuario:', data))
-.catch(error => console.error('Error:', error)); */
-
-
 </script>
 
-
-
 <template>
-
     <div class="container">
         <h1>Mis Reservas</h1>
         <div class="row">
             <div class="col">
                 <h2>Reservas Futuras</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Hora</th>
-                            <th scope="col">Título</th>
-                            <th scope="col">Localidad</th>
-                            <th scope="col">Guía</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="reserva in reservasFuturas" :key="reserva.id">
-                            <td>{{ reserva.fecha }}</td>
-                            <td>{{ reserva.hora }}</td>
-                            <td>{{ reserva.titulo }}</td>
-                            <td>{{ reserva.localidad }}</td>
-                            <td>{{ reserva.guia }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="card-deck">
+                    <div class="card" v-for="reserva in reservasFuturas" :key="reserva.reserva_id">
+                        <img :src="reserva.ruta_foto" class="card-img-top" alt="Imagen de la ruta">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ reserva.ruta_titulo }}</h5>
+                            <p class="card-text"><strong>Fecha:</strong> {{ reserva.ruta_fecha }}</p>
+                            <p class="card-text"><strong>Hora:</strong> {{ reserva.ruta_hora }}</p>
+                            <p class="card-text"><strong>Localidad:</strong> {{ reserva.ruta_localidad }}</p>
+                            <p class="card-text"><strong>Descripción:</strong> {{ reserva.ruta_descripcion }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col">
                 <h2>Reservas Pasadas</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Hora</th>
-                            <th scope="col">Título</th>
-                            <th scope="col">Localidad</th>
-                            <th scope="col">Guía</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="reserva in reservasPasadas" :key="reserva.id">
-                            <td>{{ reserva.fecha }}</td>
-                            <td>{{ reserva.hora }}</td>
-                            <td>{{ reserva.titulo }}</td>
-                            <td>{{ reserva.localidad }}</td>
-                            <td>{{ reserva.guia }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="card-deck">
+                    <div class="card" v-for="reserva in reservasPasadas" :key="reserva.reserva_id">
+                        <img :src="reserva.ruta_foto" class="card-img-top" alt="Imagen de la ruta">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ reserva.ruta_titulo }}</h5>
+                            <p class="card-text"><strong>Fecha:</strong> {{ reserva.ruta_fecha }}</p>
+                            <p class="card-text"><strong>Hora:</strong> {{ reserva.ruta_hora }}</p>
+                            <p class="card-text"><strong>Localidad:</strong> {{ reserva.ruta_localidad }}</p>
+                            <p class="card-text"><strong>Descripción:</strong> {{ reserva.ruta_descripcion }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-
-
-
 </template>
 
+<style scoped>
+.card-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
 
-<style scooped></style>
+.card {
+    margin: 10px;
+    width: 18rem;
+}
+</style>
