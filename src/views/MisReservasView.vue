@@ -51,8 +51,8 @@ onMounted(() => {
 <template>
     <div class="container">
         <h1>Mis Reservas</h1>
-        <div class="row">
-            <div class="col">
+        <div class="col">
+            <div class="row">
                 <h2>Reservas Futuras</h2>
                 <div class="card-deck">
                     <div class="card" v-for="reserva in reservasFuturas" :key="reserva.reserva_id">
@@ -67,7 +67,7 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="row">
                 <h2>Reservas Pasadas</h2>
                 <div class="card-deck">
                     <div class="card" v-for="reserva in reservasPasadas" :key="reserva.reserva_id">
@@ -87,6 +87,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.container {
+    padding-bottom: 5rem;
+}
 .card-deck {
     display: flex;
     flex-wrap: wrap;
