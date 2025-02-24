@@ -158,3 +158,11 @@ function paginaAnterior() {
         </div>
     </div>
 </template>
+
+<style scoped>
+.container{
+    padding-bottom: 5rem;
+}
+
+
+</style>

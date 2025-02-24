@@ -75,6 +75,7 @@ function formatDate(dateString) {
 </script>
 
 <template>
+    <!-- arreglar estar logueado para reservar ruta -->
     <div v-if="ruta" class="container">
         <h1>{{ ruta.titulo }}</h1>
         <p>{{ ruta.descripcion }}</p>
