@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import router from '@/router';
 import { useRoute } from 'vue-router';
+
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 

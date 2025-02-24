@@ -50,7 +50,7 @@ const router = createRouter({
       component: RutasView 
     },
     {
-      path: '/rutas/tus-reservas',
+      path: '/tus-reservas',
       name: 'tus-reservas',
       component: MisReservasView
     }
