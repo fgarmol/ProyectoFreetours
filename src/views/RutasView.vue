@@ -79,27 +79,36 @@ function formatDate(dateString) {
     <div v-if="ruta" class="container">
         <h1>{{ ruta.titulo }}</h1>
         <p>{{ ruta.descripcion }}</p>
-        <p>Fecha: {{formatDate(ruta.fecha) }} </p>
+        <p>Fecha: {{ formatDate(ruta.fecha) }} </p>
         <p>Hora: {{ ruta.hora }}</p>
         <p>Localidad: {{ ruta.localidad }}</p>
         <p>Guía: {{ ruta.guia }}</p>
         <p>Asistentes: {{ ruta.asistentes }}</p>
 
-        <form @submit.prevent="reservar" class="form">
-            <div class="form-group mt-3">
-            <label for="email">Email:&nbsp</label>
-            <input type="email" v-model="usuarioAutenticado.usuario.email" disabled />
-        </div>  
-            <div class="form-group mt-3">
-            <label for="asistentes">Cantidad de asistentes:&nbsp</label>
-            <input type="number" id="asistentes" v-model="asistentes" min="1" />
+
+        <div v-if="props.usuarioAutenticado.autenticado">
+            <form @submit.prevent="reservar" class="form">
+                <div class="form-group mt-3">
+                    <label for="email">Email:&nbsp</label>
+                    <input type="email" v-model="usuarioAutenticado.usuario.email" disabled />
+                </div>
+                <div class="form-group mt-3">
+                    <label for="asistentes">Cantidad de asistentes:&nbsp</label>
+                    <input type="number" id="asistentes" v-model="asistentes" min="1" />
+                </div>
+                <button type="submit">Reservar</button>
+            </form>
         </div>
-            <button type="submit">Reservar</button>
-        </form>
+        <div v-else class="alert alert-danger">
+            <p class="alert" >Debes estar logueado para reservar una ruta</p>
+        </div>
 
         <div id="alert" class="alert"></div>
     </div>
-    <div v-else>
-        <p>Cargando información de la ruta...</p>
-    </div>
+
+
+
+    
+
+
 </template>

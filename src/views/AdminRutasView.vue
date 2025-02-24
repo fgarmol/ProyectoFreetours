@@ -104,6 +104,41 @@ function paginaAnterior() {
         paginaActual.value--;
     }
 }
+
+function duplicarRuta(ruta) {
+    const data = {
+        titulo: ruta.titulo,
+        localidad: ruta.localidad,
+        descripcion: ruta.descripcion,
+        foto: ruta.foto,
+        fecha: ruta.fecha,
+        hora: ruta.hora,
+        latitud: ruta.latitud,
+        longitud: ruta.longitud,
+        guia_id: ruta.guia_id
+    };
+
+    fetch("http://localhost/APIFreetours/api.php/rutas", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+            return response.json();
+        })
+        .then(() => {
+            showAlert('Ruta duplicada correctamente', true);
+            cargarRutas();
+        })
+        .catch(error => showAlert(`Error al duplicar ruta: ${error.message}`));
+}
+
+
+
+
 </script>
 
 <template>

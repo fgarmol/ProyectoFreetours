@@ -20,7 +20,7 @@ function cerrarSesion() {
   <header class="header bg-dark text-white">
     <div class="container d-flex align-items-center justify-content-between">
       <div class="logo d-flex align-items-center">
-        <img src="@/assets/img/logo.png" alt="Logo" class="logo-image me-2">
+        <img src="@/assets/img/logo.png" alt="Logo" class="logo-image me-2" @click="router.push('/')" >
         <h1 class="mb-0">{{ title }}</h1>
       </div>
       <div class="actions d-flex align-items-center">

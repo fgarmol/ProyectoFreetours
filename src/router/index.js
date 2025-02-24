@@ -8,6 +8,7 @@ import AdminRutas from '@/views/AdminRutasView.vue'
 import AdminCreaRutasView from '@/views/AdminCreaRutasView.vue'
 import AdminRutasView from '@/views/AdminRutasView.vue'
 import RutasView from '@/views/RutasView.vue'
+import MisReservasView from '@/views/MisReservasView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,6 +49,11 @@ const router = createRouter({
       name: 'ruta',
       component: RutasView 
     },
+    {
+      path: '/rutas/tus-reservas',
+      name: 'tus-reservas',
+      component: MisReservasView
+    }
   ],
     
 })
