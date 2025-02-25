@@ -1,0 +1,176 @@
+Para implementar la funcionalidad de modificar la reserva para cambiar el número de asistentes, vamos a realizar los siguientes pasos:
+
+Modificar la API para actualizar el número de asistentes en una reserva existente.
+Actualizar la vista MisReservasView.vue para permitir la modificación del número de asistentes en las próximas reservas.
+Actualizar la vista RutasView.vue para mostrar la opción de modificar la reserva en lugar de crear una nueva si ya existe una reserva para esa ruta.
+Paso 1: Modificar la API
+Asegúrate de que la API soporte la actualización del número de asistentes en una reserva existente. Aquí está el código relevante en reservas.php:
+...
+// Actualizar una reserva existente
+if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+    $id = $_GET['id'];
+    $data = json_decode(file_get_contents('php://input'), true);
+    $num_personas = $data['num_personas'];
+
+    $query = "UPDATE reservas SET num_personas = $num_personas WHERE id = $id";
+    if ($conn->query($query)) {
+        echo json_encode(['status' => 'success', 'message' => 'Reserva actualizada']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Error al actualizar reserva']);
+    }
+}
+...
+
+Paso 2: Actualizar MisReservasView.vue
+Vamos a añadir un formulario para modificar el número de asistentes en las próximas reservas.
+
+...
+function openEditModal(reserva) {
+    selectedReserva.value = reserva;
+    asistentes.value = reserva.num_personas;
+    showModal.value = true;
+}
+
+function submitEditReserva() {
+    if (selectedReserva.value) {
+        const data = {
+            num_personas: asistentes.value
+        };
+
+        fetch(`http://localhost/APIFreetours/api.php/reservas?id=${selectedReserva.value.reserva_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+                return response.json();
+            })
+            .then(() => {
+                showAlert('Reserva actualizada correctamente', true);
+                obtenerReservas();
+                closeModal();
+            })
+            .catch(error => showAlert(`Error al actualizar reserva: ${error.message}`));
+    }
+}
+...
+<template>
+    ...
+    <div v-if="activeTab === 'futuras'" class="tab-pane active">
+        <div class="row">
+            <div class="card-deck">
+                <div class="card" v-for="reserva in reservasFuturas" :key="reserva.reserva_id">
+                    <img :src="reserva.ruta_foto" class="card-img-top" alt="Imagen de la ruta">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ reserva.ruta_titulo }}</h5>
+                        <p class="card-text"><strong>Fecha:</strong> {{ reserva.ruta_fecha }}</p>
+                        <p class="card-text"><strong>Hora:</strong> {{ reserva.ruta_hora }}</p>
+                        <p class="card-text"><strong>Localidad:</strong> {{ reserva.ruta_localidad }}</p>
+                        <p class="card-text"><strong>Descripción:</strong> {{ reserva.ruta_descripcion }}</p>
+                        <button @click="openEditModal(reserva)" class="btn btn-primary">Modificar Reserva</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    ...
+    <div v-if="showModal" class="modal" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modificar Reserva</h5>
+                    <button type="button" class="close" @click="closeModal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="asistentes">Cantidad de asistentes</label>
+                        <input type="number" id="asistentes" v-model="asistentes" class="form-control" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @click="submitEditReserva">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+...
+
+Paso 3: Actualizar RutasView.vue
+Vamos a modificar la vista RutasView.vue para mostrar la opción de modificar la reserva en lugar de crear una nueva si ya existe una reserva para esa ruta.
+
+...
+const reservaExistente = ref(null);
+
+function obtenerReservaExistente() {
+    const userEmail = props.usuarioAutenticado.usuario.email;
+    fetch(`http://localhost/APIFreetours/api.php/reservas?email=${userEmail}`)
+        .then(response => response.json())
+        .then(data => {
+            reservaExistente.value = data.find(reserva => reserva.ruta_id === rutaId);
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+onMounted(() => {
+    obtenerRuta();
+    obtenerReservaExistente();
+});
+...
+<template>
+    <div v-if="ruta" class="container">
+        <h1>{{ ruta.titulo }}</h1>
+        <p>{{ ruta.descripcion }}</p>
+        <p>Fecha: {{ formatDate(ruta.fecha) }} </p>
+        <p>Hora: {{ ruta.hora }}</p>
+        <p>Localidad: {{ ruta.localidad }}</p>
+        <p>Guía: {{ ruta.guia }}</p>
+        <p>Asistentes: {{ ruta.asistentes }}</p>
+
+        <div v-if="props.usuarioAutenticado.autenticado">
+            <div v-if="reservaExistente">
+                <form @submit.prevent="submitEditReserva" class="form">
+                    <div class="form-group mt-3">
+                        <label for="asistentes">Cantidad de asistentes</label>
+                        <input type="number" id="asistentes" v-model="asistentes" min="1">
+                    </div>
+                    <button type="submit">Modificar Reserva</button>
+                </form>
+            </div>
+            <div v-else>
+                <form @submit.prevent="reservar" class="form">
+                    <div class="form-group mt-3">
+                        <label for="email">Email</label>
+                        <input type="email" v-model="usuarioAutenticado.usuario.email" disabled>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="asistentes">Cantidad de asistentes</label>
+                        <input type="number" id="asistentes" v-model="asistentes" min="1">
+                    </div>
+                    <button type="submit">Reservar</button>
+                </form>
+            </div>
+        </div>
+        <div v-else class="alert alert-danger">
+            <p>Debes estar logueado para reservar una ruta</p>
+        </div>
+
+        <div id="alert" class="alert"></div>
+    </div>
+</template>
+...
+
+
+
+Listar las asignaciones del guía: No implementado.
+Pasar lista de una ruta como guía: No implementado.
+Modificar la reserva para cambiar el número de asistentes: No implementado.
+Listar rutas realizadas con opción de valorar: Implementado en MisReservasView.vue.
+Obtener la media de valoraciones de la ruta cuando se liste la rutas en el guía: No implementado.
+Duplicar ruta en otra fecha: Implementado en AdminRutasView.vue.

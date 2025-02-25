@@ -105,39 +105,55 @@ function paginaAnterior() {
     }
 }
 
-function duplicarRuta(ruta) {
-    const data = {
-        titulo: ruta.titulo,
-        localidad: ruta.localidad,
-        descripcion: ruta.descripcion,
-        foto: ruta.foto,
-        fecha: ruta.fecha,
-        hora: ruta.hora,
-        latitud: ruta.latitud,
-        longitud: ruta.longitud,
-        guia_id: ruta.guia_id
-    };
+const showModal = ref(false);
+const selectedRuta = ref(null);
+const nuevaFecha = ref('');
 
-    fetch("http://localhost/APIFreetours/api.php/rutas", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-            return response.json();
-        })
-        .then(() => {
-            showAlert('Ruta duplicada correctamente', true);
-            cargarRutas();
-        })
-        .catch(error => showAlert(`Error al duplicar ruta: ${error.message}`));
+function openModal(ruta) {
+    selectedRuta.value = ruta;
+    nuevaFecha.value = ruta.fecha;
+    showModal.value = true;
 }
 
+function closeModal() {
+    showModal.value = false;
+    selectedRuta.value = null;
+    nuevaFecha.value = '';
+}
 
+function duplicarRuta() {
+    if (selectedRuta.value) {
+        const data = {
+            titulo: selectedRuta.value.titulo,
+            localidad: selectedRuta.value.localidad,
+            descripcion: selectedRuta.value.descripcion,
+            foto: selectedRuta.value.foto,
+            fecha: nuevaFecha.value,
+            hora: selectedRuta.value.hora,
+            latitud: selectedRuta.value.latitud,
+            longitud: selectedRuta.value.longitud,
+            guia_id: selectedRuta.value.guia_id
+        };
 
+        fetch("http://localhost/APIFreetours/api.php/rutas", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+                return response.json();
+            })
+            .then(() => {
+                showAlert('Ruta duplicada correctamente', true);
+                cargarRutas();
+                closeModal();
+            })
+            .catch(error => showAlert(`Error al duplicar ruta: ${error.message}`));
+    }
+}
 
 </script>
 
@@ -173,7 +189,7 @@ function duplicarRuta(ruta) {
                     <td>{{ ruta.longitud }}</td>
                     <td>
                         <select v-model="ruta.guia_id" @change="asignarGuia(ruta)">
-                            <option value="">Seleccionar guía</option>
+                            <option disabled>Seleccionar guía</option>
                             <option v-for="guia in obtenerGuias(ruta)" :key="guia.id" :value="guia.id">
                                 {{ guia.nombre }}
                             </option>
@@ -181,7 +197,7 @@ function duplicarRuta(ruta) {
                     </td>
                     <td>
                         <button @click="eliminarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
-                        <button @click="duplicarRuta(ruta)" class="btn btn-secondary">Duplicar</button>
+                        <button @click="openModal(ruta)" class="btn btn-secondary">Duplicar</button>
                     </td>
                 </tr>
             </tbody>
@@ -192,6 +208,29 @@ function duplicarRuta(ruta) {
             <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas">Siguiente</button>
         </div>
     </div>
+
+    <div v-if="showModal" class="modal" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Duplicar Ruta</h5>
+                    <button type="button" class="close" @click="closeModal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="nuevaFecha">Nueva Fecha</label>
+                        <input type="date" id="nuevaFecha" v-model="nuevaFecha" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @click="duplicarRuta">Duplicar Ruta</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -199,5 +238,16 @@ function duplicarRuta(ruta) {
     padding-bottom: 5rem;
 }
 
+.modal {
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 </style>
