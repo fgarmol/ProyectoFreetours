@@ -24,3 +24,6 @@ No implementado.
 Duplicar ruta en otra fecha: 
 
 Implementado en AdminRutasView.vue.
+
+
+FALTA FILTRAR RUTAS EN ADMIN POR PASADAS Y PRÓXIMAS
