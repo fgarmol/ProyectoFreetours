@@ -27,3 +27,6 @@ Implementado en AdminRutasView.vue.
 
 
 FALTA FILTRAR RUTAS EN ADMIN POR PASADAS Y PRÓXIMAS
+
+
+    CANCELAR RUTA
