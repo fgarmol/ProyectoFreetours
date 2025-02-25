@@ -19,12 +19,16 @@ const reservasFuturas = ref([]);
 const activeTab = ref('futuras');
 
 const showModal = ref(false);
+const showEditModal = ref(false);
+
 const selectedReserva = ref(null);
 const estrellas = ref(0);
 const comentario = ref('');
+const numPersonas = ref(0); 
 
-function showAlert(){
-    
+
+function showAlert() {
+
 }
 
 
@@ -38,6 +42,25 @@ function closeModal() {
     selectedReserva.value = null;
     estrellas.value = 0;
     comentario.value = '';
+}
+
+function openEditModal(reserva) {
+    selectedReserva.value = reserva;
+    numPersonas.value = reserva.num_personas;
+    showEditModal.value = true;
+}
+
+function closeEditModal() {
+    showEditModal.value = false;
+    selectedReserva.value = null;
+    numPersonas.value = 0;
+}
+
+function submitEditReserva() {
+    if (selectedReserva.value) {
+        modificarReserva(selectedReserva.value.reserva_id, numPersonas.value);
+        closeEditModal();
+    }
 }
 
 function submitValoracion() {
@@ -107,10 +130,36 @@ function valorarRuta(rutaId, estrellas, comentario) {
         });
 }
 
+
+function modificarReserva(reservaId, numPersonas) {
+    const data = {
+        num_personas: numPersonas
+    };
+
+    fetch(`http://localhost/APIFreetours/api.php/reservas?id=${reservaId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Reserva actualizada:', data);
+            obtenerReservas(); // Actualizar la lista de reservas
+        })
+        .catch(error => console.error('Error al actualizar reserva:', error));
+}
+
+
 </script>
 
 <template>
     <div class="container">
+        <div class="alert" role="alert"></div>
         <h1>Mis Reservas</h1>
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -134,6 +183,7 @@ function valorarRuta(rutaId, estrellas, comentario) {
                                 <p class="card-text"><strong>Hora:</strong> {{ reserva.ruta_hora }}</p>
                                 <p class="card-text"><strong>Localidad:</strong> {{ reserva.ruta_localidad }}</p>
                                 <p class="card-text"><strong>Descripción:</strong> {{ reserva.ruta_descripcion }}</p>
+                                <button @click="openEditModal(reserva)" class="btn btn-secondary">Editar Reserva</button>
                             </div>
                         </div>
                     </div>
@@ -182,6 +232,28 @@ function valorarRuta(rutaId, estrellas, comentario) {
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
                     <button type="button" class="btn btn-primary" @click="submitValoracion">Guardar Valoración</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="showEditModal" class="modal" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Reserva</h5>
+                    <button type="button" class="close" @click="closeEditModal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="numPersonas">Número de Asistentes</label>
+                        <input type="number" id="numPersonas" v-model="numPersonas" class="form-control" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closeEditModal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @click="submitEditReserva">Guardar Cambios</button>
                 </div>
             </div>
         </div>
