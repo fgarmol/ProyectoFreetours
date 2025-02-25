@@ -13,6 +13,9 @@ const props = defineProps({
     }
 });
 
+const emits = defineEmits(['sesionIniciada']);
+
+
 const reservas = ref([]);
 const reservasPasadas = ref([]);
 const reservasFuturas = ref([]);

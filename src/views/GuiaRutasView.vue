@@ -8,6 +8,8 @@ const props = defineProps({
     }
 });
 
+const emits = defineEmits(['sesionIniciada']);
+
 const rutasAsignadas = ref([]);
 const asistentes = ref([]);
 const showModal = ref(false);

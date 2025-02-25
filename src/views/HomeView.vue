@@ -9,6 +9,9 @@ const props = defineProps({
   }
 });
 
+const emits = defineEmits(['sesionIniciada']);
+
+
 const tours = ref([]);
 const paginaActual = ref(1);
 const itemsPorPagina = 15;
