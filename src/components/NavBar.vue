@@ -20,10 +20,13 @@ const props = defineProps({
                 <li class="nav-link">
                     <RouterLink class="nav-link" to="/">Home</RouterLink>
                 </li>
-                <li   class="nav-link"  v-if="datos?.autenticado">
+                <li   class="nav-link"  v-if="datos?.autenticado && datos?.usuario.rol != 'guia'">
                     <RouterLink class="nav-link" to="/tus-reservas">Mis Reservas</RouterLink>
                 </li>
-                <!-- se mostrará la seccion de Admin si el rol del usuario es Admin -->
+                <li class="nav-link" v-if="datos?.autenticado && datos?.usuario.rol == 'guia'">
+                    <RouterLink class="nav-link" to="/guia/rutas">Rutas Asignadas</RouterLink>
+                </li>
+                    
                 <li class="nav-link" v-if="datos?.autenticado && datos?.usuario.rol == 'admin'">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
