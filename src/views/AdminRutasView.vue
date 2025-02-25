@@ -1,10 +1,22 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 
+const props = defineProps({
+    usuarioAutenticado: {
+        type: Object,
+        required: true
+    }
+});
+
+const emit = defineEmits(['sesionIniciada']);
+
 const rutas = ref([]);
 const paginaActual = ref(1);
 const itemsPorPagina = 10;
 const guiasDisponibles = ref({});
+const guiasDisponiblesModal = ref([]);
+const sortKey = ref('');
+const sortOrder = ref(1); // 1 for ascending, -1 for descending
 
 function showAlert(message, isSuccess = false) {
     const alert = document.getElementById('alert');
@@ -21,6 +33,9 @@ function cargarGuia(fecha, rutaId) {
         })
         .then(data => {
             guiasDisponibles.value[rutaId] = data;
+            if (rutaId === selectedRuta.value?.id) {
+                guiasDisponiblesModal.value = data;
+            }
         })
         .catch(error => showAlert(`Error al cargar guías: ${error.message}`));
 }
@@ -113,13 +128,38 @@ function openModal(ruta) {
     selectedRuta.value = ruta;
     nuevaFecha.value = ruta.fecha;
     showModal.value = true;
+    cargarGuia(nuevaFecha.value, ruta.id);
 }
 
 function closeModal() {
     showModal.value = false;
     selectedRuta.value = null;
     nuevaFecha.value = '';
+    guiasDisponiblesModal.value = [];
 }
+
+
+
+function eliminarRuta(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta ruta?')) {
+        return;
+    }
+    fetch(`http://localhost/APIFreetours/api.php/rutas?id=${id}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(responseData => {
+            showAlert('Ruta eliminada exitosamente', true);
+            cargarRutas();
+        })
+        .catch(error => showAlert(`Error al eliminar la ruta: ${error.message}`, false));
+}
+
 
 function duplicarRuta() {
     if (selectedRuta.value) {
@@ -155,25 +195,45 @@ function duplicarRuta() {
     }
 }
 
+const totalRutas = computed(() => rutas.value.length);
+
+function sortBy(key) {
+    if (sortKey.value === key) {
+        sortOrder.value = -sortOrder.value;
+    } else {
+        sortKey.value = key;
+        sortOrder.value = 1;
+    }
+    rutas.value.sort((a, b) => {
+        if (a[key] < b[key]) return -sortOrder.value;
+        if (a[key] > b[key]) return sortOrder.value;
+        return 0;
+    });
+}
+
 </script>
 
 <template>
     <div class="container">
         <h1>Administrar rutas</h1>
+        <div id="alert" class="alert"></div>
         <div>
             <router-link to="/admin/rutas/crearRuta" class="btn btn-primary">Crear ruta</router-link>
         </div>
-        <div id="alert" class="alert"></div>
+
+        <div class="counters d-flex justify-content-end">
+            <span class="fw-bold">Total de rutas: {{ totalRutas }}</span>
+        </div>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Título</th>
-                    <th>Localidad</th>
-                    <th>Descripción</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Latitud</th>
-                    <th>Longitud</th>
+                    <th @click="sortBy('titulo')">Título</th>
+                    <th @click="sortBy('localidad')">Localidad</th>
+                    <th @click="sortBy('descripcion')">Descripción</th>
+                    <th @click="sortBy('fecha')">Fecha</th>
+                    <th @click="sortBy('hora')">Hora</th>
+                    <th @click="sortBy('latitud')">Latitud</th>
+                    <th @click="sortBy('longitud')">Longitud</th>
                     <th>Guía</th>
                     <th>Acciones</th>
                 </tr>
@@ -221,7 +281,14 @@ function duplicarRuta() {
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="nuevaFecha">Nueva Fecha</label>
-                        <input type="date" id="nuevaFecha" v-model="nuevaFecha" class="form-control">
+                        <input type="date" id="nuevaFecha" v-model="nuevaFecha" class="form-control"
+                            @change="cargarGuia(nuevaFecha, selectedRuta.id)">
+                    </div>
+                    <div class="form-group">
+                        <label for="guia">Guía</label>
+                        <select class="form-control" id="guia" v-model="selectedRuta.guia_id">
+                            <option v-for="guia in guiasDisponiblesModal" :key="guia.id" :value="guia.id">{{ guia.nombre }}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -234,7 +301,7 @@ function duplicarRuta() {
 </template>
 
 <style scoped>
-.container{
+.container {
     padding-bottom: 5rem;
 }
 
@@ -250,4 +317,7 @@ function duplicarRuta() {
     justify-content: center;
 }
 
+.counters {
+    margin: 1rem 0;
+}
 </style>

@@ -6,6 +6,8 @@ const props = defineProps({
   usuarioAutenticado: Object
 });
 
+const emits = defineEmits(['sesionIniciada']);
+
 const users = ref([]);
 const paginaActual = ref(1);
 const itemsPorPagina = 10; // Número de usuarios por página
@@ -146,13 +148,20 @@ function paginaAnterior() {
     paginaActual.value--;
   }
 }
+
+const totalUsuarios = computed(() => users.value.length);
+
 </script>
 
 <template>
   <div class="container">
-    <h1>Usuarios</h1>
+    <h1>Administrar usuarios</h1>
     <div id="alert" class="alert"></div>
     <button class="btn btn-primary" @click="mostrarModalCrearUsuario">Crear Usuario</button>
+    <div class="counters d-flex justify-content-end">
+      <span class="fw-bold">Total de usuarios: {{ totalUsuarios }}</span>
+    </div>
+    
     <table class="table">
       <thead>
         <tr>
@@ -230,7 +239,7 @@ footer {
 .container {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 5em;
+  padding-bottom: 5rem;
 }
 
 body,
@@ -255,5 +264,9 @@ html {
 
 .pagination button {
   margin: 0 0.5rem;
+}
+
+.counters {
+  margin: 1rem 0;
 }
 </style>
