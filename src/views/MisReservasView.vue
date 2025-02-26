@@ -30,8 +30,10 @@ const comentario = ref('');
 const numPersonas = ref(0); 
 
 
-function showAlert() {
-
+function showAlert(message, isSuccess = false) {
+    const alert = document.querySelector('.alert');
+    alert.textContent = message;
+    alert.className = isSuccess ? 'alert alert-success' : 'alert alert-danger';
 }
 
 
@@ -157,6 +159,27 @@ function modificarReserva(reservaId, numPersonas) {
         .catch(error => console.error('Error al actualizar reserva:', error));
 }
 
+function cancelarReserva(reservaId) {
+    if (!confirm('¿Estás seguro de que deseas cancelar esta reserva?')) return;
+
+
+    fetch(`http://localhost/APIFreetours/api.php/reservas?id=${reservaId}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Reserva eliminada:', data);
+            showAlert('Reserva cancelada correctamente', true);
+            obtenerReservas(); // Actualizar la lista de reservas
+        })
+        .catch(error => {
+            console.error('Error al cancelar reserva:', error);
+            showAlert('Error al cancelar reserva', false);
+        });
+}
 
 </script>
 
@@ -166,12 +189,10 @@ function modificarReserva(reservaId, numPersonas) {
         <h1>Mis Reservas</h1>
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'futuras' }" @click="activeTab = 'futuras'">Próximas
-                    Reservas</a>
+                <a class="nav-link" :class="{ active: activeTab === 'futuras' }" @click="activeTab = 'futuras'">Próximas Reservas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'">Reservas
-                    Pasadas</a>
+                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'">Reservas Pasadas</a>
             </li>
         </ul>
         <div class="tab-content">
@@ -187,6 +208,7 @@ function modificarReserva(reservaId, numPersonas) {
                                 <p class="card-text"><strong>Localidad:</strong> {{ reserva.ruta_localidad }}</p>
                                 <p class="card-text"><strong>Descripción:</strong> {{ reserva.ruta_descripcion }}</p>
                                 <button @click="openEditModal(reserva)" class="btn btn-secondary">Editar Reserva</button>
+                                <button @click="cancelarReserva(reserva.reserva_id)" class="btn btn-danger">Cancelar Reserva</button>
                             </div>
                         </div>
                     </div>

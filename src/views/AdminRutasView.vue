@@ -99,6 +99,21 @@ function obtenerGuias(ruta) {
     return disponibles;
 }
 
+function cancelarRuta(rutaId) {
+    fetch(`http://localhost/APIFreetours/api.php/rutas?id=${rutaId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+            return response.json();
+        })
+        .then(() => {
+            showAlert('Ruta cancelada correctamente', true);
+            cargarRutas();
+        })
+        .catch(error => showAlert(`Error al cancelar ruta: ${error.message}`));
+}
+
 onMounted(() => {
     cargarRutas();
 });
@@ -211,6 +226,10 @@ function paginaSiguiente() {
                             <td>
                                 <button @click="eliminarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
                                 <button @click="openModal(ruta)" class="btn btn-secondary">Duplicar</button>
+                                <span v-if="ruta.asistentes < 10" class="text-warning">
+                                    <i class="fas fa-exclamation-triangle"></i> Menos de 10 asistentes
+                                </span>
+                                
                             </td>
                         </tr>
                     </tbody>
@@ -225,8 +244,7 @@ function paginaSiguiente() {
                             <th @click="sortBy('descripcion')">Descripción</th>
                             <th @click="sortBy('fecha')">Fecha</th>
                             <th @click="sortBy('hora')">Hora</th>
-                            <th @click="sortBy('latitud')">Latitud</th>
-                            <th @click="sortBy('longitud')">Longitud</th>
+                            <th @click="sortBy('asistentes')">Asistentes</th>
                             <th>Guía</th>
                             <th>Acciones</th>
                         </tr>
@@ -238,8 +256,7 @@ function paginaSiguiente() {
                             <td>{{ ruta.descripcion }}</td>
                             <td>{{ ruta.fecha }}</td>
                             <td>{{ ruta.hora }}</td>
-                            <td>{{ ruta.latitud }}</td>
-                            <td>{{ ruta.longitud }}</td>
+                            <td>{{ ruta.asistentes }}</td>
                             <td>
                                 <select v-model="ruta.guia_id" @change="asignarGuia(ruta)">
                                     <option disabled>Seleccionar guía</option>

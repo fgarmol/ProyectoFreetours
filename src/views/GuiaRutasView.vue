@@ -12,7 +12,6 @@ const emits = defineEmits(['sesionIniciada']);
 
 const rutasAsignadas = ref([]);
 const asistentes = ref([]);
-const showModal = ref(false);
 const selectedRuta = ref(null);
 
 function showAlert(message, isSuccess = false) {
@@ -27,7 +26,8 @@ function obtenerRutasAsignadas() {
     fetch(`http://localhost/APIFreetours/api.php/asignaciones?guia_id=${guiaId}`)
         .then(response => response.json())
         .then(data => {
-            rutasAsignadas.value = data;
+            // Ordenar las rutas por fecha
+            rutasAsignadas.value = data.sort((a, b) => new Date(a.ruta_fecha) - new Date(b.ruta_fecha));
         })
         .catch(error => showAlert(`Error al obtener rutas asignadas: ${error.message}`));
 }
@@ -35,13 +35,25 @@ function obtenerRutasAsignadas() {
 function verAsistentes(ruta) {
     selectedRuta.value = ruta;
     asistentes.value = ruta.reservas;
-    showModal.value = true;
 }
 
-function closeModal() {
-    showModal.value = false;
-    selectedRuta.value = null;
-    asistentes.value = [];
+function actualizarAsistentes(asistente) {
+    fetch(`http://localhost/APIFreetours/api.php/reservas?id=${asistente.reserva_id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ num_personas: asistente.num_personas })
+    })
+    .then(response => response.json())
+    .then(data => {
+        showAlert('Número de asistentes actualizado correctamente', true);
+    })
+    .catch(error => showAlert(`Error al actualizar asistentes: ${error.message}`));
+}
+
+function calcularTotalAsistentes(ruta) {
+    return ruta.reservas.reduce((total, reserva) => total + reserva.num_personas, 0);
 }
 
 onMounted(() => {
@@ -59,29 +71,27 @@ onMounted(() => {
                 <p class="card-text"><strong>Localidad:</strong> {{ ruta.ruta_localidad }}</p>
                 <p class="card-text"><strong>Fecha:</strong> {{ ruta.ruta_fecha }}</p>
                 <p class="card-text"><strong>Hora:</strong> {{ ruta.ruta_hora }}</p>
+                <p class="card-text"><strong>Total de Asistentes:</strong> {{ calcularTotalAsistentes(ruta) }}</p>
                 <button @click="verAsistentes(ruta)" class="btn btn-primary">Ver Asistentes</button>
-            </div>
-        </div>
-    </div>
-
-    <div v-if="showModal" class="modal" tabindex="-1" role="dialog" style="display: block;">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Listado de Asistentes</h5>
-                    <button type="button" class="close" @click="closeModal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <ul class="list-group">
-                        <li v-for="asistente in asistentes" :key="asistente.reserva_id" class="list-group-item">
-                            {{ asistente.cliente.email }} - {{ asistente.num_personas }} asistentes
-                        </li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
+                <div v-if="selectedRuta && selectedRuta.ruta_id === ruta.ruta_id" class="accordion mt-3">
+                    <div v-for="asistente in asistentes" :key="asistente.reserva_id" class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + asistente.reserva_id">
+                                {{ asistente.cliente.email }} - {{ asistente.num_personas }} asistentes
+                            </button>
+                        </h2>
+                        <div :id="'collapse' + asistente.reserva_id" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <form @submit.prevent="actualizarAsistentes(asistente)">
+                                    <div class="mb-3">
+                                        <label for="numPersonas" class="form-label">Número de asistentes</label>
+                                        <input type="number" v-model="asistente.num_personas" class="form-control" id="numPersonas" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,15 +103,7 @@ onMounted(() => {
     padding-bottom: 5rem;
 }
 
-.modal {
-    background: rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.accordion-button {
+    cursor: pointer;
 }
 </style>
