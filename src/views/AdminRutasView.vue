@@ -23,6 +23,7 @@ const paginaActual = ref(1);
 const totalPaginas = ref(1);
 const selectedRuta = ref(null);
 const nuevaFecha = ref('');
+const todasLasValoraciones = ref([]);
 
 function showAlert(message, isSuccess = false) {
     const alert = document.getElementById('alert');
@@ -46,18 +47,40 @@ function cargarGuia(fecha, rutaId) {
         .catch(error => showAlert(`Error al cargar guías: ${error.message}`));
 }
 
+function obtenerValoraciones() {
+    fetch(`http://localhost/APIFreetours/api.php/valoraciones`)
+        .then(response => {
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+            return response.json();
+        })
+        .then(data => {
+            try {
+                todasLasValoraciones.value = data;
+                console.log('Valoraciones cargadas:', todasLasValoraciones.value);
+            } catch (error) {
+                showAlert(`Error al procesar valoraciones: ${error.message}`);
+            }
+        })
+        .catch(error => showAlert(`Error al obtener valoraciones: ${error.message}`));
+}
+
 function cargarRutas() {
     fetch("http://localhost/APIFreetours/api.php/rutas")
         .then(response => {
             if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
             return response.json();
         })
-        .then(data => {
+        .then(async data => {
             rutas.value = data;
             // Para cada ruta, cargar sus guías disponibles según la fecha
             rutas.value.forEach(ruta => {
                 cargarGuia(ruta.fecha, ruta.id);
             });
+            console.log('valoraciones:', todasLasValoraciones.value);
+
+
+
+
             console.log('Rutas cargadas:', rutas.value);
         })
         .catch(error => showAlert(`Error al obtener rutas: ${error.message}`));
@@ -101,6 +124,8 @@ function obtenerGuias(ruta) {
 }
 
 function cancelarRuta(rutaId) {
+
+    if (!confirm('¿Estás seguro de que deseas cancelar esta ruta?')) return;
     fetch(`http://localhost/APIFreetours/api.php/rutas?id=${rutaId}`, {
         method: 'DELETE'
     })
@@ -116,7 +141,9 @@ function cancelarRuta(rutaId) {
 }
 
 onMounted(() => {
+    
     cargarRutas();
+    
 });
 
 const rutasPendientes = computed(() => {
@@ -152,38 +179,7 @@ function sortBy(key) {
     });
 }
 
-/* 2. Obtener las valoraciones de una ruta (GET):
-const rutaId = 1; // Reemplaza con el ID de la ruta deseada
-fetch(`http://localhost/api.php/valoraciones?ruta_id=${rutaId}`)
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Error en la solicitud: ' + response.status);
-    }
-    return response.json();
-  })
-  .then(data => {
-    console.log(`Valoraciones para la ruta ${rutaId}:`, data);
-    // Procesar los datos según sea necesario
-  })
-  .catch(error => {
-    console.error(`Error al obtener las valoraciones para la ruta ${rutaId}:`, error);
-  }); */
 
-
-function obtenerValoraciones(rutaId, callback) {
-    fetch(`http://localhost/APIFreetours/api.php/valoraciones?ruta_id=${rutaId}`)
-        .then(response => {
-            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-            return response.json();
-        })
-        .then(data => {
-            console.log(`Valoraciones para la ruta ${rutaId}:`, data);
-            callback(data);
-        })
-        .catch(error => {
-            console.error(`Error al obtener las valoraciones para la ruta ${rutaId}:`, error);
-        });
-}
 
 function calcularMediaValoraciones(valoraciones) {
     const totalValoraciones = valoraciones.length;
@@ -237,10 +233,12 @@ function paginaSiguiente() {
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'pendientes' }" @click="activeTab = 'pendientes'">Rutas Pendientes</a>
+                <a class="nav-link" :class="{ active: activeTab === 'pendientes' }"
+                    @click="activeTab = 'pendientes'">Rutas Pendientes</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'">Rutas Pasadas</a>
+                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'">Rutas
+                    Pasadas</a>
             </li>
         </ul>
 
@@ -280,12 +278,12 @@ function paginaSiguiente() {
                                 </select>
                             </td>
                             <td>
-                                <button @click="eliminarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
+                                <button @click="cancelarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
                                 <button @click="openModal(ruta)" class="btn btn-secondary">Duplicar</button>
                                 <span v-if="ruta.asistentes < 10" class="text-warning">
                                     <i class="fas fa-exclamation-triangle"></i>❗
                                 </span>
-                                
+
                             </td>
                         </tr>
                     </tbody>
@@ -332,7 +330,7 @@ function paginaSiguiente() {
                                 </select>
                             </td>
                             <td>
-                                <button @click="eliminarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
+                                <button @click="cancelarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
                                 <button @click="openModal(ruta)" class="btn btn-secondary">Duplicar</button>
                             </td>
                         </tr>
@@ -366,7 +364,8 @@ function paginaSiguiente() {
                     <div class="form-group">
                         <label for="guia">Guía</label>
                         <select class="form-control" id="guia" v-model="selectedRuta.guia_id">
-                            <option v-for="guia in guiasDisponiblesModal" :key="guia.id" :value="guia.id">{{ guia.nombre }}</option>
+                            <option v-for="guia in guiasDisponiblesModal" :key="guia.id" :value="guia.id">{{ guia.nombre
+                                }}</option>
                         </select>
                     </div>
                 </div>
