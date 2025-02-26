@@ -58,6 +58,7 @@ function cargarRutas() {
             rutas.value.forEach(ruta => {
                 cargarGuia(ruta.fecha, ruta.id);
             });
+            console.log('Rutas cargadas:', rutas.value);
         })
         .catch(error => showAlert(`Error al obtener rutas: ${error.message}`));
 }
@@ -134,11 +135,64 @@ function sortBy(key) {
         sortOrder.value = 1;
     }
     rutas.value.sort((a, b) => {
-        if (a[key] < b[key]) return -sortOrder.value;
-        if (a[key] > b[key]) return sortOrder.value;
-        return 0;
+        let aValue = a[key];
+        let bValue = b[key];
+
+        // Convertir a números si la clave es 'id'
+        if (key === 'id') {
+            aValue = Number(aValue);
+            bValue = Number(bValue);
+        }
+
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return (aValue - bValue) * sortOrder.value;
+        } else {
+            return aValue.localeCompare(bValue) * sortOrder.value;
+        }
     });
 }
+
+/* 2. Obtener las valoraciones de una ruta (GET):
+const rutaId = 1; // Reemplaza con el ID de la ruta deseada
+fetch(`http://localhost/api.php/valoraciones?ruta_id=${rutaId}`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error en la solicitud: ' + response.status);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log(`Valoraciones para la ruta ${rutaId}:`, data);
+    // Procesar los datos según sea necesario
+  })
+  .catch(error => {
+    console.error(`Error al obtener las valoraciones para la ruta ${rutaId}:`, error);
+  }); */
+
+
+function obtenerValoraciones(rutaId, callback) {
+    fetch(`http://localhost/APIFreetours/api.php/valoraciones?ruta_id=${rutaId}`)
+        .then(response => {
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log(`Valoraciones para la ruta ${rutaId}:`, data);
+            callback(data);
+        })
+        .catch(error => {
+            console.error(`Error al obtener las valoraciones para la ruta ${rutaId}:`, error);
+        });
+}
+
+function calcularMediaValoraciones(valoraciones) {
+    const totalValoraciones = valoraciones.length;
+    if (totalValoraciones === 0) return 0;
+
+    const sumaValoraciones = valoraciones.reduce((total, valoracion) => total + valoracion.valoracion, 0);
+    return sumaValoraciones / totalValoraciones;
+}
+
 
 function openModal(ruta) {
     selectedRuta.value = ruta;
@@ -195,6 +249,7 @@ function paginaSiguiente() {
                 <table class="table">
                     <thead>
                         <tr>
+                            <th @click="sortBy('id')">ID</th>
                             <th @click="sortBy('titulo')">Título</th>
                             <th @click="sortBy('localidad')">Localidad</th>
                             <th @click="sortBy('descripcion')">Descripción</th>
@@ -208,6 +263,7 @@ function paginaSiguiente() {
                     </thead>
                     <tbody>
                         <tr v-for="ruta in rutasPendientes" :key="ruta.id">
+                            <td>{{ ruta.id }}</td>
                             <td>{{ ruta.titulo }}</td>
                             <td>{{ ruta.localidad }}</td>
                             <td>{{ ruta.descripcion }}</td>
@@ -227,7 +283,7 @@ function paginaSiguiente() {
                                 <button @click="eliminarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
                                 <button @click="openModal(ruta)" class="btn btn-secondary">Duplicar</button>
                                 <span v-if="ruta.asistentes < 10" class="text-warning">
-                                    <i class="fas fa-exclamation-triangle"></i> Menos de 10 asistentes
+                                    <i class="fas fa-exclamation-triangle"></i>❗
                                 </span>
                                 
                             </td>
@@ -239,24 +295,34 @@ function paginaSiguiente() {
                 <table class="table">
                     <thead>
                         <tr>
+                            <th @click="sortBy('id')">ID</th>
                             <th @click="sortBy('titulo')">Título</th>
                             <th @click="sortBy('localidad')">Localidad</th>
                             <th @click="sortBy('descripcion')">Descripción</th>
                             <th @click="sortBy('fecha')">Fecha</th>
                             <th @click="sortBy('hora')">Hora</th>
                             <th @click="sortBy('asistentes')">Asistentes</th>
-                            <th>Guía</th>
+                            <th>Media Valoraciones</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="ruta in rutasPasadas" :key="ruta.id">
+                            <td>{{ ruta.id }}</td>
                             <td>{{ ruta.titulo }}</td>
                             <td>{{ ruta.localidad }}</td>
                             <td>{{ ruta.descripcion }}</td>
                             <td>{{ ruta.fecha }}</td>
                             <td>{{ ruta.hora }}</td>
                             <td>{{ ruta.asistentes }}</td>
+                            <td>
+                                <span v-if="ruta.mediaValoraciones !== undefined && !isNaN(ruta.mediaValoraciones)">
+                                    Media de valoraciones: {{ ruta.mediaValoraciones.toFixed(2) }}
+                                </span>
+                                <span v-else>
+                                    No tiene valoraciones aún
+                                </span>
+                            </td>
                             <td>
                                 <select v-model="ruta.guia_id" @change="asignarGuia(ruta)">
                                     <option disabled>Seleccionar guía</option>
