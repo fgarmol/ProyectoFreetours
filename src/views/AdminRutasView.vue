@@ -24,6 +24,7 @@ const totalPaginas = ref(1);
 const selectedRuta = ref(null);
 const nuevaFecha = ref('');
 const todasLasValoraciones = ref([]);
+const mediasValoraciones = ref([]);
 
 function showAlert(message, isSuccess = false) {
     const alert = document.getElementById('alert');
@@ -50,13 +51,17 @@ function cargarGuia(fecha, rutaId) {
 function obtenerValoraciones() {
     fetch(`http://localhost/APIFreetours/api.php/valoraciones`)
         .then(response => {
-            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-            return response.json();
+            // Intentar procesar la respuesta incluso si hay un error
+            return response.json().catch(() => {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            });
         })
         .then(data => {
             try {
                 todasLasValoraciones.value = data;
                 console.log('Valoraciones cargadas:', todasLasValoraciones.value);
+                mediasValoraciones.value = calcularMedia(); // Llamar a calcularMedia después de obtener las valoraciones
+                console.log('Medias calculadas:', mediasValoraciones.value);
             } catch (error) {
                 showAlert(`Error al procesar valoraciones: ${error.message}`);
             }
@@ -76,11 +81,6 @@ function cargarRutas() {
             rutas.value.forEach(ruta => {
                 cargarGuia(ruta.fecha, ruta.id);
             });
-            console.log('valoraciones:', todasLasValoraciones.value);
-
-
-
-
             console.log('Rutas cargadas:', rutas.value);
         })
         .catch(error => showAlert(`Error al obtener rutas: ${error.message}`));
@@ -105,9 +105,7 @@ function asignarGuia(ruta) {
         })
         .then(() => {
             showAlert('Guía asignado correctamente', true);
-
             cargarRutas();
-
         })
         .catch(error => showAlert(`Error al asignar guía: ${error.message}`));
 }
@@ -124,7 +122,6 @@ function obtenerGuias(ruta) {
 }
 
 function cancelarRuta(rutaId) {
-
     if (!confirm('¿Estás seguro de que deseas cancelar esta ruta?')) return;
     fetch(`http://localhost/APIFreetours/api.php/rutas?id=${rutaId}`, {
         method: 'DELETE'
@@ -141,9 +138,8 @@ function cancelarRuta(rutaId) {
 }
 
 onMounted(() => {
-    
     cargarRutas();
-    
+    obtenerValoraciones();
 });
 
 const rutasPendientes = computed(() => {
@@ -179,16 +175,27 @@ function sortBy(key) {
     });
 }
 
-
-
-function calcularMediaValoraciones(valoraciones) {
-    const totalValoraciones = valoraciones.length;
-    if (totalValoraciones === 0) return 0;
-
-    const sumaValoraciones = valoraciones.reduce((total, valoracion) => total + valoracion.valoracion, 0);
-    return sumaValoraciones / totalValoraciones;
+function calcularMedia() {
+    const medias = [];
+    todasLasValoraciones.value.forEach(valoracion => {
+        const rutaId = valoracion.ruta_id;
+        const valoracionesRuta = todasLasValoraciones.value.filter(v => v.ruta_id === rutaId);
+        console.log(`Valoraciones para ruta ${rutaId}:`, valoracionesRuta);
+        if (valoracionesRuta.length > 0) {
+            const sumaValoraciones = valoracionesRuta.reduce((acc, v) => acc + v.puntuacion, 0);
+            const media = sumaValoraciones / valoracionesRuta.length;
+            medias.push({ ruta_id: rutaId, media });
+        }
+    });
+    console.log('Medias calculadas:', medias);
+    return medias;
 }
 
+function obtenerMedia(rutaId) {
+    const media = mediasValoraciones.value.find(m => m.ruta_id === rutaId);
+    console.log(`Media para ruta ${rutaId}:`, media);
+    return media ? media.media : null;
+}
 
 function openModal(ruta) {
     selectedRuta.value = ruta;
@@ -200,7 +207,36 @@ function closeModal() {
 }
 
 function duplicarRuta() {
-    // Implementar la lógica para duplicar la ruta
+
+    const nuevaRuta = {
+        titulo: selectedRuta.value.titulo,
+        localidad: selectedRuta.value.localidad,
+        descripcion: selectedRuta.value.descripcion,
+        fecha: nuevaFecha.value,
+        hora: selectedRuta.value.hora,
+        latitud: selectedRuta.value.latitud,
+        longitud: selectedRuta.value.longitud,
+        guia_id: selectedRuta.value.guia_id
+    };
+
+    fetch("http://localhost/APIFreetours/api.php/rutas", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nuevaRuta)
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+            return response.json();
+        })
+        .then(() => {
+            showAlert('Ruta duplicada correctamente', true);
+            cargarRutas();
+            closeModal();
+        })
+        .catch(error => showAlert(`Error al duplicar ruta: ${error.message}`));
+
     closeModal();
 }
 
@@ -314,8 +350,8 @@ function paginaSiguiente() {
                             <td>{{ ruta.hora }}</td>
                             <td>{{ ruta.asistentes }}</td>
                             <td>
-                                <span v-if="ruta.mediaValoraciones !== undefined && !isNaN(ruta.mediaValoraciones)">
-                                    Media de valoraciones: {{ ruta.mediaValoraciones.toFixed(2) }}
+                                <span v-if="obtenerMedia(ruta.id) !== null">
+                                    Media de valoraciones: {{ obtenerMedia(ruta.id).toFixed(2) }}
                                 </span>
                                 <span v-else>
                                     No tiene valoraciones aún
@@ -365,7 +401,7 @@ function paginaSiguiente() {
                         <label for="guia">Guía</label>
                         <select class="form-control" id="guia" v-model="selectedRuta.guia_id">
                             <option v-for="guia in guiasDisponiblesModal" :key="guia.id" :value="guia.id">{{ guia.nombre
-                                }}</option>
+                            }}</option>
                         </select>
                     </div>
                 </div>
