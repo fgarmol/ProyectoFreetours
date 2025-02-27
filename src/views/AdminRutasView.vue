@@ -273,6 +273,20 @@ function paginaSiguiente() {
         cargarRutas();
     }
 }
+
+function openModal(ruta) {
+    selectedRuta.value = ruta;
+    guiasDisponiblesModal.value = guiasDisponibles.value[ruta.id] || [];
+    nuevaFecha.value = '';
+    showModal.value = true;
+}
+
+function closeModal() {
+    showModal.value = false;
+}
+
+
+
 </script>
 
 <template>
