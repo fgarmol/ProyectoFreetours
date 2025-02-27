@@ -14,7 +14,7 @@ function showAlert(message, isSuccess = false) {
     const alert = document.getElementById('alert');
     alert.textContent = message;
     alert.style.display = 'block';
-    alert.className = isSuccess ? 'alert success' : 'alert';
+    alert.className = isSuccess ? 'alert alert-success' : 'alert alert-danger';
 }
 
 const newRuta = ref({
@@ -134,16 +134,18 @@ const searchLocation = async () => {
 
 <template>
     <div class="container">
-        <div id="alert" class="alert"></div>
+        <div id="alert" class="alert" style="display: none;"></div>
         <h1 class="m-3 mt-1">Crear Ruta</h1>
         <form @submit.prevent="crearRuta" class="form m-3">
-            <div class="form-group">
-                <label for="titulo">Título</label>
-                <input type="text" class="form-control" id="titulo" v-model="newRuta.titulo">
-            </div>
-            <div class="form-group">
-                <label for="localidad">Localidad</label>
-                <input type="text" class="form-control" id="localidad" v-model="newRuta.localidad">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="titulo">Título</label>
+                    <input type="text" class="form-control" id="titulo" v-model="newRuta.titulo">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="localidad">Localidad</label>
+                    <input type="text" class="form-control" id="localidad" v-model="newRuta.localidad">
+                </div>
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
@@ -153,22 +155,26 @@ const searchLocation = async () => {
                 <label for="foto">Foto</label>
                 <input type="text" class="form-control" id="foto" placeholder="URL" v-model="newRuta.foto">
             </div>
-            <div class="form-group">
-                <label for="fecha">Fecha</label>
-                <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha"
-                    @change="cargarGuia(newRuta.fecha)">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha"
+                        @change="cargarGuia(newRuta.fecha)">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="hora">Hora</label>
+                    <input type="time" class="form-control" id="hora" v-model="newRuta.hora">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="hora">Hora</label>
-                <input type="time" class="form-control" id="hora" v-model="newRuta.hora">
-            </div>
-            <div class="form-group">
-                <label for="latitud">Latitud</label>
-                <input type="text" class="form-control" id="latitud" v-model="newRuta.latitud">
-            </div>
-            <div class="form-group">
-                <label for="longitud">Longitud</label>
-                <input type="text" class="form-control" id="longitud" v-model="newRuta.longitud">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="latitud">Latitud</label>
+                    <input type="text" class="form-control" id="latitud" v-model="newRuta.latitud">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="longitud">Longitud</label>
+                    <input type="text" class="form-control" id="longitud" v-model="newRuta.longitud">
+                </div>
             </div>
             <div class="form-group">
                 <label for="guia">Guía</label>
@@ -179,15 +185,13 @@ const searchLocation = async () => {
             </div>
             <button type="submit" class="btn btn-primary">Crear</button>
 
-
             <div class="form-group mt-3">
                 <input v-model="address" @keyup.enter="searchLocation" placeholder="Buscar dirección"
-                    class="input " />
-                <button @click="searchLocation" class="btn btn-secondary">Buscar</button>
-                <div id="map"></div>
+                    class="form-control" />
+                <button @click="searchLocation" class="btn btn-secondary mt-2">Buscar</button>
+                <div id="map" class="mt-3"></div>
             </div>
         </form>
-
     </div>
 </template>
 
@@ -199,7 +203,6 @@ const searchLocation = async () => {
 #map {
     height: 300px;
     margin-top: 1rem;
-
 }
 
 .footer {

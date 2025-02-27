@@ -9,9 +9,7 @@ const props = defineProps({
 const emit = defineEmits(["sesionCerrada"]);
 
 function cerrarSesion() {
-  // Emitir el evento para notificar al componente padre que la sesión se ha cerrado
   emit('sesionCerrada', null);
-  // Redirigir al usuario a la página de inicio
   router.push('/');
 }
 </script>
@@ -69,6 +67,5 @@ function cerrarSesion() {
   max-width: none !important;
   margin: 0 ;
   padding-bottom: 0;
-
 }
 </style>
