@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import dayjs from 'dayjs'; // Asegúrate de tener dayjs instalado
 
+
 const props = defineProps({
     usuarioAutenticado: {
         type: Object,
@@ -25,6 +26,9 @@ const selectedRuta = ref(null);
 const nuevaFecha = ref('');
 const todasLasValoraciones = ref([]);
 const mediasValoraciones = ref([]);
+const mediasCalculadas = ref([]);
+
+
 
 function showAlert(message, isSuccess = false) {
     const alert = document.getElementById('alert');
@@ -59,9 +63,9 @@ function obtenerValoraciones() {
         .then(data => {
             try {
                 todasLasValoraciones.value = data;
-                console.log('Valoraciones cargadas:', todasLasValoraciones.value);
+                /* console.log('Valoraciones cargadas:', todasLasValoraciones.value); */
                 mediasValoraciones.value = calcularMedia(); // Llamar a calcularMedia después de obtener las valoraciones
-                console.log('Medias calculadas:', mediasValoraciones.value);
+                /* console.log('Medias calculadas:', mediasValoraciones.value); */
             } catch (error) {
                 showAlert(`Error al procesar valoraciones: ${error.message}`);
             }
@@ -81,7 +85,8 @@ function cargarRutas() {
             rutas.value.forEach(ruta => {
                 cargarGuia(ruta.fecha, ruta.id);
             });
-            console.log('Rutas cargadas:', rutas.value);
+/*             console.log('Rutas cargadas:', rutas.value);
+ */            obtenerValoraciones();
         })
         .catch(error => showAlert(`Error al obtener rutas: ${error.message}`));
 }
@@ -139,7 +144,7 @@ function cancelarRuta(rutaId) {
 
 onMounted(() => {
     cargarRutas();
-    obtenerValoraciones();
+    
 });
 
 const rutasPendientes = computed(() => {
@@ -177,34 +182,49 @@ function sortBy(key) {
 
 function calcularMedia() {
     const medias = [];
+
+    // Recorremos todas las valoraciones
     todasLasValoraciones.value.forEach(valoracion => {
         const rutaId = valoracion.ruta_id;
-        const valoracionesRuta = todasLasValoraciones.value.filter(v => v.ruta_id === rutaId);
-        console.log(`Valoraciones para ruta ${rutaId}:`, valoracionesRuta);
-        if (valoracionesRuta.length > 0) {
-            const sumaValoraciones = valoracionesRuta.reduce((acc, v) => acc + v.puntuacion, 0);
-            const media = sumaValoraciones / valoracionesRuta.length;
-            medias.push({ ruta_id: rutaId, media });
+
+        // Verificamos si ya hemos calculado la media para esta ruta
+        if (!medias.some(media => media.ruta_id === rutaId)) {
+            // Filtramos las valoraciones para la ruta actual
+            const valoracionesRuta = todasLasValoraciones.value.filter(v => v.ruta_id === rutaId);
+            /* console.log(`Valoraciones para ruta ${rutaId}:`, valoracionesRuta); */
+
+            if (valoracionesRuta.length > 0) {
+                // Sumamos las puntuaciones
+                const sumaValoraciones = valoracionesRuta.reduce((acc, v) => acc + v.puntuacion, 0);
+                // Calculamos la media
+                const media = sumaValoraciones / valoracionesRuta.length;
+
+                // Guardamos la media calculada
+                medias.push({ ruta_id: rutaId, media });
+            }
         }
     });
+
     console.log('Medias calculadas:', medias);
+
+    // Guardamos las medias en el estado global
+    mediasCalculadas.value = medias;
     return medias;
 }
 
-function obtenerMedia(rutaId) {
-    const media = mediasValoraciones.value.find(m => m.ruta_id === rutaId);
-    console.log(`Media para ruta ${rutaId}:`, media);
-    return media ? media.media : null;
+function obtenerMedia(idruta) {
+  // Convertir el id a número para asegurar la comparación
+  const id = Number(idruta);
+  /* console.log('Medias almacenadas en mediasCalculadas:', mediasCalculadas.value); */
+  const media = mediasCalculadas.value.find(item => item.ruta_id === id);
+  if (!media) {
+    console.log(`No se encontró media para la ruta ${idruta}`);
+  }
+  return media ? media.media : null;
 }
 
-function openModal(ruta) {
-    selectedRuta.value = ruta;
-    showModal.value = true;
-}
 
-function closeModal() {
-    showModal.value = false;
-}
+
 
 function duplicarRuta() {
 
@@ -350,13 +370,14 @@ function paginaSiguiente() {
                             <td>{{ ruta.hora }}</td>
                             <td>{{ ruta.asistentes }}</td>
                             <td>
-                                <span v-if="obtenerMedia(ruta.id) !== null">
-                                    Media de valoraciones: {{ obtenerMedia(ruta.id).toFixed(2) }}
+                                <span v-if="(media = obtenerMedia(ruta.id)) !== null">
+                                    Media de valoraciones: {{ media.toFixed(2) }}
                                 </span>
                                 <span v-else>
                                     No tiene valoraciones aún
                                 </span>
                             </td>
+
                             <td>
                                 <select v-model="ruta.guia_id" @change="asignarGuia(ruta)">
                                     <option disabled>Seleccionar guía</option>
@@ -401,7 +422,7 @@ function paginaSiguiente() {
                         <label for="guia">Guía</label>
                         <select class="form-control" id="guia" v-model="selectedRuta.guia_id">
                             <option v-for="guia in guiasDisponiblesModal" :key="guia.id" :value="guia.id">{{ guia.nombre
-                            }}</option>
+                                }}</option>
                         </select>
                     </div>
                 </div>
