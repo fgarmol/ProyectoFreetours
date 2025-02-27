@@ -157,50 +157,53 @@ const totalUsuarios = computed(() => users.value.length);
   <div class="container">
     <h1>Administrar usuarios</h1>
     <div id="alert" class="alert"></div>
-    <button class="btn btn-primary" @click="mostrarModalCrearUsuario">Crear Usuario</button>
-    <div class="counters d-flex justify-content-end">
+    <button class="btn btn-primary mb-3" @click="mostrarModalCrearUsuario">Crear Usuario</button>
+    <div class="counters d-flex justify-content-end mb-3">
       <span class="fw-bold">Total de usuarios: {{ totalUsuarios }}</span>
     </div>
     
-    <table class="table">
-      <thead>
-        <tr>
-          <th>id</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Contraseña</th>
-          <th>Rol</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="usuario in usuariosPaginados" :key="usuario.id">
-          <td>{{ usuario.id }}</td>
-          <td>{{ usuario.nombre }}</td>
-          <td>{{ usuario.email }}</td>
-          <td>{{ usuario.contraseña }}</td>
-          <td>
-            <select v-model="usuario.rol" @change="actualizarRol(usuario)">
-              <option value="admin">Administrador</option>
-              <option value="guia">Guía</option>
-              <option value="cliente">Cliente</option>
-            </select>
-          </td>
-          <td>
-            <button class="btn btn-danger" @click="eliminarUsuario(usuario.id)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="pagination">
-      <button @click="paginaAnterior" :disabled="paginaActual === 1">Anterior</button>
-      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
-      <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas">Siguiente</button>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Contraseña</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="usuario in usuariosPaginados" :key="usuario.id">
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.contraseña }}</td>
+            <td>
+              <select v-model="usuario.rol" @change="actualizarRol(usuario)" class="form-select">
+                <option value="admin">Administrador</option>
+                <option value="guia">Guía</option>
+                <option value="cliente">Cliente</option>
+              </select>
+            </td>
+            <td>
+              <button class="btn btn-danger btn-sm" @click="eliminarUsuario(usuario.id)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="pagination d-flex justify-content-center mt-3">
+      <button @click="paginaAnterior" :disabled="paginaActual === 1" class="btn btn-primary btn-sm">Anterior</button>
+      <span class="mx-2">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas" class="btn btn-primary btn-sm">Siguiente</button>
     </div>
   </div>
 
-  <div v-if="showModalCrearUsuario" class="modal" style="display: block;">
-    <div class="modal-dialog">
+  <div v-if="showModalCrearUsuario" class="modal" tabindex="-1" role="dialog" style="display: block;">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Crear Usuario</h5>

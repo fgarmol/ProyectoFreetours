@@ -218,7 +218,7 @@ function obtenerMedia(idruta) {
   /* console.log('Medias almacenadas en mediasCalculadas:', mediasCalculadas.value); */
   const media = mediasCalculadas.value.find(item => item.ruta_id === id);
   if (!media) {
-    console.log(`No se encontró media para la ruta ${idruta}`);
+    /* console.log(`No se encontró media para la ruta ${idruta}`); */
   }
   return media ? media.media : null;
 }
@@ -279,15 +279,15 @@ function paginaSiguiente() {
     <div class="container">
         <h1>Administrar rutas</h1>
         <div id="alert" class="alert"></div>
-        <div>
+        <div class="mb-3">
             <router-link to="/admin/rutas/crearRuta" class="btn btn-primary">Crear ruta</router-link>
         </div>
 
-        <div class="counters d-flex justify-content-end">
+        <div class="counters d-flex justify-content-end mb-3">
             <span class="fw-bold">Total de rutas: {{ rutas.length }}</span>
         </div>
 
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs mb-3">
             <li class="nav-item">
                 <a class="nav-link" :class="{ active: activeTab === 'pendientes' }"
                     @click="activeTab = 'pendientes'">Rutas Pendientes</a>
@@ -300,106 +300,108 @@ function paginaSiguiente() {
 
         <div class="tab-content">
             <div v-if="activeTab === 'pendientes'" class="tab-pane active">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th @click="sortBy('id')">ID</th>
-                            <th @click="sortBy('titulo')">Título</th>
-                            <th @click="sortBy('localidad')">Localidad</th>
-                            <th @click="sortBy('descripcion')">Descripción</th>
-                            <th @click="sortBy('fecha')">Fecha</th>
-                            <th @click="sortBy('hora')">Hora</th>
-                            <th @click="sortBy('latitud')">Latitud</th>
-                            <th @click="sortBy('longitud')">Longitud</th>
-                            <th>Guía</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="ruta in rutasPendientes" :key="ruta.id">
-                            <td>{{ ruta.id }}</td>
-                            <td>{{ ruta.titulo }}</td>
-                            <td>{{ ruta.localidad }}</td>
-                            <td>{{ ruta.descripcion }}</td>
-                            <td>{{ ruta.fecha }}</td>
-                            <td>{{ ruta.hora }}</td>
-                            <td>{{ ruta.latitud }}</td>
-                            <td>{{ ruta.longitud }}</td>
-                            <td>
-                                <select v-model="ruta.guia_id" @change="asignarGuia(ruta)">
-                                    <option disabled>Seleccionar guía</option>
-                                    <option v-for="guia in obtenerGuias(ruta)" :key="guia.id" :value="guia.id">
-                                        {{ guia.nombre }}
-                                    </option>
-                                </select>
-                            </td>
-                            <td>
-                                <button @click="cancelarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
-                                <button @click="openModal(ruta)" class="btn btn-secondary">Duplicar</button>
-                                <span v-if="ruta.asistentes < 10" class="text-warning">
-                                    <i class="fas fa-exclamation-triangle"></i>❗
-                                </span>
-
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th @click="sortBy('id')">ID</th>
+                                <th @click="sortBy('titulo')">Título</th>
+                                <th @click="sortBy('localidad')">Localidad</th>
+                                <th @click="sortBy('descripcion')">Descripción</th>
+                                <th @click="sortBy('fecha')">Fecha</th>
+                                <th @click="sortBy('hora')">Hora</th>
+                                <th @click="sortBy('latitud')">Latitud</th>
+                                <th @click="sortBy('longitud')">Longitud</th>
+                                <th>Guía</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ruta in rutasPendientes" :key="ruta.id">
+                                <td>{{ ruta.id }}</td>
+                                <td>{{ ruta.titulo }}</td>
+                                <td>{{ ruta.localidad }}</td>
+                                <td>{{ ruta.descripcion }}</td>
+                                <td>{{ ruta.fecha }}</td>
+                                <td>{{ ruta.hora }}</td>
+                                <td>{{ ruta.latitud }}</td>
+                                <td>{{ ruta.longitud }}</td>
+                                <td>
+                                    <select v-model="ruta.guia_id" @change="asignarGuia(ruta)" class="form-select">
+                                        <option disabled>Seleccionar guía</option>
+                                        <option v-for="guia in obtenerGuias(ruta)" :key="guia.id" :value="guia.id">
+                                            {{ guia.nombre }}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button @click="cancelarRuta(ruta.id)" class="btn btn-danger btn-sm">Eliminar</button>
+                                    <button @click="openModal(ruta)" class="btn btn-secondary btn-sm">Duplicar</button>
+                                    <span v-if="ruta.asistentes < 10" class="text-warning">
+                                        <i class="fas fa-exclamation-triangle"></i>❗
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div v-if="activeTab === 'pasadas'" class="tab-pane active">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th @click="sortBy('id')">ID</th>
-                            <th @click="sortBy('titulo')">Título</th>
-                            <th @click="sortBy('localidad')">Localidad</th>
-                            <th @click="sortBy('descripcion')">Descripción</th>
-                            <th @click="sortBy('fecha')">Fecha</th>
-                            <th @click="sortBy('hora')">Hora</th>
-                            <th @click="sortBy('asistentes')">Asistentes</th>
-                            <th>Media Valoraciones</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="ruta in rutasPasadas" :key="ruta.id">
-                            <td>{{ ruta.id }}</td>
-                            <td>{{ ruta.titulo }}</td>
-                            <td>{{ ruta.localidad }}</td>
-                            <td>{{ ruta.descripcion }}</td>
-                            <td>{{ ruta.fecha }}</td>
-                            <td>{{ ruta.hora }}</td>
-                            <td>{{ ruta.asistentes }}</td>
-                            <td>
-                                <span v-if="(media = obtenerMedia(ruta.id)) !== null">
-                                    Media de valoraciones: {{ media.toFixed(2) }}
-                                </span>
-                                <span v-else>
-                                    No tiene valoraciones aún
-                                </span>
-                            </td>
-
-                            <td>
-                                <select v-model="ruta.guia_id" @change="asignarGuia(ruta)">
-                                    <option disabled>Seleccionar guía</option>
-                                    <option v-for="guia in obtenerGuias(ruta)" :key="guia.id" :value="guia.id">
-                                        {{ guia.nombre }}
-                                    </option>
-                                </select>
-                            </td>
-                            <td>
-                                <button @click="cancelarRuta(ruta.id)" class="btn btn-danger">Eliminar</button>
-                                <button @click="openModal(ruta)" class="btn btn-secondary">Duplicar</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th @click="sortBy('id')">ID</th>
+                                <th @click="sortBy('titulo')">Título</th>
+                                <th @click="sortBy('localidad')">Localidad</th>
+                                <th @click="sortBy('descripcion')">Descripción</th>
+                                <th @click="sortBy('fecha')">Fecha</th>
+                                <th @click="sortBy('hora')">Hora</th>
+                                <th @click="sortBy('asistentes')">Asistentes</th>
+                                <th>Media Valoraciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ruta in rutasPasadas" :key="ruta.id">
+                                <td>{{ ruta.id }}</td>
+                                <td>{{ ruta.titulo }}</td>
+                                <td>{{ ruta.localidad }}</td>
+                                <td>{{ ruta.descripcion }}</td>
+                                <td>{{ ruta.fecha }}</td>
+                                <td>{{ ruta.hora }}</td>
+                                <td>{{ ruta.asistentes }}</td>
+                                <td>
+                                    <span v-if="(media = obtenerMedia(ruta.id)) !== null">
+                                        Media de valoraciones: {{ media.toFixed(2) }}
+                                    </span>
+                                    <span v-else>
+                                        No tiene valoraciones aún
+                                    </span>
+                                </td>
+                                <td>
+                                    <select v-model="ruta.guia_id" @change="asignarGuia(ruta)" class="form-control">
+                                        <option disabled>Seleccionar guía</option>
+                                        <option v-for="guia in obtenerGuias(ruta)" :key="guia.id" :value="guia.id">
+                                            {{ guia.nombre }}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button @click="cancelarRuta(ruta.id)" class="btn btn-danger btn-sm">Eliminar</button>
+                                    <button @click="openModal(ruta)" class="btn btn-secondary btn-sm">Duplicar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div class="pagination">
-            <button @click="paginaAnterior" :disabled="paginaActual === 1">Anterior</button>
-            <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
-            <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas">Siguiente</button>
+        <div class="pagination d-flex justify-content-center mt-3">
+            <button @click="paginaAnterior" :disabled="paginaActual === 1" class="btn btn-primary btn-sm">Anterior</button>
+            <span class="mx-2">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas" class="btn btn-primary btn-sm">Siguiente</button>
         </div>
     </div>
 
