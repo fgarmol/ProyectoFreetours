@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
   title: String,
@@ -89,15 +89,118 @@ function paginaAnterior() {
 onMounted(() => {
   cargarRutas();
 });
+
+const isPlaying = ref(false);
+const progress = ref(0);
+const video = ref(null);
+const controlsVisible = ref(false);
+
+function togglePlay(event) {
+  event.stopPropagation(); // Detener la propagación del evento de clic
+  if (video.value.paused) {
+    video.value.play();
+    isPlaying.value = true;
+  } else {
+    video.value.pause();
+    isPlaying.value = false;
+  }
+}
+
+function updateProgress() {
+  progress.value = (video.value.currentTime / video.value.duration) * 100;
+}
+
+function seek(event) {
+  const seekTime = (event.target.value / 100) * video.value.duration;
+  video.value.currentTime = seekTime;
+}
+
+function showControls() {
+  controlsVisible.value = true;
+}
+
+function hideControls() {
+  controlsVisible.value = false;
+}
+
+function toggleFullScreen() {
+  if (!document.fullscreenElement) {
+    video.value.requestFullscreen().catch(err => {
+      alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function handleFullScreenChange() {
+  if (document.fullscreenElement) {
+    showControls();
+  } else {
+    hideControls();
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullScreenChange);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', handleFullScreenChange);
+});
 </script>
 
 <template>
+  <header>
+    <div id="carouselExampleIndicators" class="carousel slide mb-4" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="video-container" @mouseover="showControls" @mouseleave="hideControls">
+            <video ref="video" class="d-block w-100 carousel-video" @timeupdate="updateProgress" autoplay muted>
+              <source src="@/assets/img/video.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-controls" :class="{ 'hidden': !controlsVisible }">
+              <button @click="togglePlay($event)">{{ isPlaying ? 'Pause' : 'Play' }}</button>
+              <input type="range" min="0" max="100" v-model="progress" @input="seek">
+              
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="https://picsum.photos/1200/300?random=1" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+          <img src="https://picsum.photos/1200/300?random=2" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+          <img src="https://picsum.photos/1200/300?random=3" class="d-block w-100" alt="...">
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </header>
   <div class="container">
+
+
     <div class="row">
       <!-- Filtros de búsqueda (Sidebar Filters) -->
       <aside class="col-md-3 mb-4">
         <div class="card">
-          <div class="card-body">
+          <div class="card-body-search">
             <div class="mb-3">
               <input type="text" class="form-control" placeholder="Buscar destino" v-model="localidadBusqueda">
             </div>
@@ -124,10 +227,10 @@ onMounted(() => {
           <span class="fw-bold">{{ toursOrdenados.length }} rutas encontradas</span>
         </div>
         <div class="row">
-          <div class="col-md-6 mb-4" v-for="tour in toursPaginados" :key="tour.id">
-            <div class="card h-100">
-              <img :src="tour.foto" :alt="tour.titulo" class="card-img-top">
-              <div class="card-body">
+          <div class="col-12 mb-4" v-for="tour in toursPaginados" :key="tour.id">
+            <div class="card h-100 flex-md-row">
+              <img :src="tour.foto" :alt="tour.titulo" class="card-img-top w-100 w-md-50">
+              <div class="card-body d-flex flex-column justify-content-center">
                 <h5 class="card-title">{{ tour.titulo }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ tour.localidad }}</h6>
                 <div class="d-flex align-items-center mb-2">
@@ -138,15 +241,17 @@ onMounted(() => {
                 <p class="card-text"><small class="text-muted">Duración: {{ tour.hora }}</small></p>
                 <p class="card-text"><small class="text-muted">Operador: {{ tour.guia_nombre }}</small></p>
                 <p class="card-text"><small class="text-muted">Fecha: {{ tour.fecha }}</small></p>
-                <router-link :to="'/rutas/' + tour.id" class="btn btn-primary">Reservar</router-link>
+                <router-link :to="'/rutas/' + tour.id" class="btn btn-primary mt-auto">Reservar</router-link>
               </div>
             </div>
           </div>
         </div>
         <div class="d-flex justify-content-center">
-          <button @click="paginaAnterior" class="btn btn-secondary me-2" :disabled="paginaActual === 1">Anterior</button>
+          <button @click="paginaAnterior" class="btn btn-secondary me-2"
+            :disabled="paginaActual === 1">Anterior</button>
           <span class="align-self-center">Página {{ paginaActual }} de {{ totalPaginas }}</span>
-          <button @click="paginaSiguiente" class="btn btn-secondary ms-2" :disabled="paginaActual === totalPaginas">Siguiente</button>
+          <button @click="paginaSiguiente" class="btn btn-secondary ms-2"
+            :disabled="paginaActual === totalPaginas">Siguiente</button>
         </div>
       </section>
     </div>
@@ -154,11 +259,125 @@ onMounted(() => {
 </template>
 
 <style scoped>
+:root {
+  --primary-color: #2E8B57; /* Verde Bosque */
+  --secondary-color: #FFD700; /* Amarillo Dorado */
+  --background-color: #F5F5F5; /* Blanco Humo */
+  --text-color: #000000; /* Negro */
+  --muted-text-color: #6c757d; /* Gris Muted */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+}
+
+.carousel-indicators button {
+  background-color: var(--secondary-color);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1);
+}
+
+.card {
+  border: 1px solid var(--primary-color);
+}
+
+.card-title {
+  color: var(--primary-color);
+}
+
+.card-subtitle {
+  color: var(--muted-text-color);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
 .card-img-top {
   height: 200px;
   object-fit: cover;
 }
-.container{
+
+.carousel-video {
+  height: 530px; /* Ajusta esta altura para que coincida con la altura de las imágenes */
+  object-fit: cover;
+}
+
+.video-container {
+  position: relative;
+}
+
+.video-controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px;
+  z-index: 10; /* Asegura que los controles estén por encima de otros elementos */
+  transition: opacity 0.3s;
+}
+
+.video-controls.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-controls button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.video-controls input[type="range"] {
+  flex-grow: 1;
+  margin: 0 10px;
+}
+
+.container {
   padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .card-img-top {
+    height: auto;
+    width: 50%;
+    object-fit: cover;
+  }
+
+  .card.h-100 {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%; /* Asegura que el cuerpo de la tarjeta tenga el mismo ancho */
+  }
+  .card-body-search {
+    padding: 1rem;
+  }
 }
 </style>
