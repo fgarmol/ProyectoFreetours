@@ -1,10 +1,10 @@
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
-
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-notify';
 
 const props = defineProps({
     usuarioAutenticado: {
@@ -14,7 +14,6 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['sesionIniciada']);
-
 
 const reservas = ref([]);
 const reservasPasadas = ref([]);
@@ -29,13 +28,22 @@ const estrellas = ref(0);
 const comentario = ref('');
 const numPersonas = ref(0); 
 
-
 function showAlert(message, isSuccess = false) {
-    const alert = document.querySelector('.alert');
-    alert.textContent = message;
-    alert.className = isSuccess ? 'alert alert-success' : 'alert alert-danger';
+    $.notify({
+        message: message
+    }, {
+        type: isSuccess ? 'success' : 'danger',
+        delay: 2000,
+        placement: {
+            from: "bottom",
+            align: "right"
+        },
+        animate: {
+            enter: 'animated slideInUp',
+            exit: 'animated slideOutDown'
+        }
+    });
 }
-
 
 function openModal(reserva) {
     selectedReserva.value = reserva;
@@ -104,7 +112,6 @@ onMounted(() => {
     obtenerReservas();
 });
 
-
 function valorarRuta(rutaId, estrellas, comentario) {
     const nuevaValoracion = {
         user_id: props.usuarioAutenticado.usuario.id,
@@ -128,13 +135,13 @@ function valorarRuta(rutaId, estrellas, comentario) {
         })
         .then(data => {
             console.log('Valoración creada:', data);
-            // Manejar la respuesta según sea necesario
+            showAlert('Valoración creada correctamente', true);
         })
         .catch(error => {
             console.error('Error al crear la valoración:', error);
+            showAlert('Error al crear la valoración', false);
         });
 }
-
 
 function modificarReserva(reservaId, numPersonas) {
     const data = {
@@ -154,14 +161,17 @@ function modificarReserva(reservaId, numPersonas) {
         })
         .then(data => {
             console.log('Reserva actualizada:', data);
+            showAlert('Reserva actualizada correctamente', true);
             obtenerReservas(); // Actualizar la lista de reservas
         })
-        .catch(error => console.error('Error al actualizar reserva:', error));
+        .catch(error => {
+            console.error('Error al actualizar reserva:', error);
+            showAlert('Error al actualizar reserva', false);
+        });
 }
 
 function cancelarReserva(reservaId) {
     if (!confirm('¿Estás seguro de que deseas cancelar esta reserva?')) return;
-
 
     fetch(`http://localhost/APIFreetours/api.php/reservas?id=${reservaId}`, {
         method: 'DELETE',

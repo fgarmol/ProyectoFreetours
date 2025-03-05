@@ -1,32 +1,13 @@
 
+instrucciones notify:
 
-Listar las asignaciones del guía: 
-
-Implementado.
-
-
-Pasar lista de una ruta como guía: 
-
-IMPLEMENTADO AUNQUE FALTA PODER MODIFICAR LA RESERVA PARA AJUSTAR EL NUMERO DE ASISTENTES FINALES
-
-Modificar la reserva para cambiar el número de asistentes:
-
-IMPLEMENTADO
-
-Listar rutas realizadas con opción de valorar: 
-
-Implementado en MisReservasView.vue.
-
-Obtener la media de valoraciones de la ruta cuando se liste la rutas en el guía: 
-
-No implementado.
-
-Duplicar ruta en otra fecha: 
-
-Implementado en AdminRutasView.vue.
+- npm install bootstrap-notify
+- npm install jquery
 
 
-FALTA FILTRAR RUTAS EN ADMIN POR PASADAS Y PRÓXIMAS
 
 
-    CANCELAR RUTA
+
+
+
+

@@ -15,10 +15,20 @@ const asistentes = ref([]);
 const selectedRuta = ref(null);
 
 function showAlert(message, isSuccess = false) {
-    const alert = document.getElementById('alert');
-    alert.textContent = message;
-    alert.style.display = 'block';
-    alert.className = isSuccess ? 'alert success' : 'alert';
+    $.notify({
+        message: message
+    }, {
+        type: isSuccess ? 'success' : 'danger',
+        delay: 2000,
+        placement: {
+            from: "bottom",
+            align: "right"
+        },
+        animate: {
+            enter: 'animated slideInUp',
+            exit: 'animated slideOutDown'
+        }
+    });
 }
 
 function obtenerRutasAsignadas() {

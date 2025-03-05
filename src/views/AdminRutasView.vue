@@ -31,10 +31,20 @@ const mediasCalculadas = ref([]);
 
 
 function showAlert(message, isSuccess = false) {
-    const alert = document.getElementById('alert');
-    alert.textContent = message;
-    alert.style.display = 'block';
-    alert.className = isSuccess ? 'alert success' : 'alert';
+    $.notify({
+        message: message
+    }, {
+        type: isSuccess ? 'success' : 'danger',
+        delay: 2000,
+        placement: {
+            from: "bottom",
+            align: "right"
+        },
+        animate: {
+            enter: 'animated slideInUp',
+            exit: 'animated slideOutDown'
+        }
+    });
 }
 
 function cargarGuia(fecha, rutaId) {
@@ -273,6 +283,18 @@ function paginaSiguiente() {
         cargarRutas();
     }
 }
+
+function openModal(ruta) {
+    selectedRuta.value = ruta;
+    nuevaFecha.value = '';
+    guiasDisponiblesModal.value = guiasDisponibles.value[ruta.id] || [];
+    showModal.value = true;
+}
+
+function closeModal() {
+    showModal.value = false;
+}
+
 </script>
 
 <template>

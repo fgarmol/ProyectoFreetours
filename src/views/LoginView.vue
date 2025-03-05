@@ -7,14 +7,20 @@ const emit = defineEmits(['sesionIniciada']);
 const form = ref({ usuario: '', password: '' });
 
 function showAlert(message, isSuccess = false) {
-    const alert = document.getElementById('alert');
-    if (alert) {
-        alert.textContent = message;
-        alert.style.display = 'block';
-        alert.className = isSuccess ? 'alert success' : 'alert';
-    } else {
-        console.error('Elemento con ID "alert" no encontrado');
-    }
+    $.notify({
+        message: message
+    }, {
+        type: isSuccess ? 'success' : 'danger',
+        delay: 2000,
+        placement: {
+            from: "bottom",
+            align: "right"
+        },
+        animate: {
+            enter: 'animated slideInUp',
+            exit: 'animated slideOutDown'
+        }
+    });
 }
 
 async function iniciarSesion() {

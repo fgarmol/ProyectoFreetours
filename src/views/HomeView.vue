@@ -158,4 +158,7 @@ onMounted(() => {
   height: 200px;
   object-fit: cover;
 }
+.container{
+  padding-bottom: 5rem;
+}
 </style>
