@@ -122,32 +122,6 @@ function showControls() {
 function hideControls() {
   controlsVisible.value = false;
 }
-
-function toggleFullScreen() {
-  if (!document.fullscreenElement) {
-    video.value.requestFullscreen().catch(err => {
-      alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-    });
-  } else {
-    document.exitFullscreen();
-  }
-}
-
-function handleFullScreenChange() {
-  if (document.fullscreenElement) {
-    showControls();
-  } else {
-    hideControls();
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('fullscreenchange', handleFullScreenChange);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('fullscreenchange', handleFullScreenChange);
-});
 </script>
 
 <template>
@@ -169,7 +143,6 @@ onUnmounted(() => {
             <div class="video-controls" :class="{ 'hidden': !controlsVisible }">
               <button @click="togglePlay($event)">{{ isPlaying ? 'Pause' : 'Play' }}</button>
               <input type="range" min="0" max="100" v-model="progress" @input="seek">
-              
             </div>
           </div>
         </div>
@@ -194,8 +167,6 @@ onUnmounted(() => {
     </div>
   </header>
   <div class="container">
-
-
     <div class="row">
       <!-- Filtros de búsqueda (Sidebar Filters) -->
       <aside class="col-md-3 mb-4">
@@ -228,7 +199,7 @@ onUnmounted(() => {
         </div>
         <div class="row">
           <div class="col-12 mb-4" v-for="tour in toursPaginados" :key="tour.id">
-            <div class="card h-100 flex-md-row">
+            <div class="card h-100 flex-md-row shadow-sm">
               <img :src="tour.foto" :alt="tour.titulo" class="card-img-top w-100 w-md-50">
               <div class="card-body d-flex flex-column justify-content-center">
                 <h5 class="card-title">{{ tour.titulo }}</h5>
@@ -259,27 +230,25 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-:root {
-  --primary-color: #2E8B57; /* Verde Bosque */
-  --secondary-color: #FFD700; /* Amarillo Dorado */
-  --background-color: #F5F5F5; /* Blanco Humo */
-  --text-color: #000000; /* Negro */
-  --muted-text-color: #6c757d; /* Gris Muted */
-}
+
 
 body {
-  background-color: var(--background-color);
-  color: var(--text-color);
+  background-color: var(--color-fondo-claro);
+  color: var(--color-texto-principal);
 }
 
 .header {
-  background-color: var(--primary-color);
-  color: white;
+  background-color: var(--color-azul-profundo);
+  color: var(--color-fondo-claro);
   padding: 1rem;
 }
 
 .carousel-indicators button {
-  background-color: var(--secondary-color);
+  background-color: var(--color-amarillo-solar);
+}
+
+.carousel-indicators button:hover {
+  background-color: var(--color-azul-profundo);
 }
 
 .carousel-control-prev-icon,
@@ -287,26 +256,40 @@ body {
   filter: invert(1);
 }
 
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  filter: invert(0.5);
+}
+
 .card {
-  border: 1px solid var(--primary-color);
+  background-color: var(--color-fondo-claro); /* Fondo de las tarjetas */
+  border: 1px solid var(--color-azul-profundo);
 }
 
 .card-title {
-  color: var(--primary-color);
+  color: var(--color-azul-profundo);
 }
 
 .card-subtitle {
-  color: var(--muted-text-color);
+  color: var(--color-texto-secundario);
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
+  background-color: var(--color-verde-vibrante);
+  border-color: var(--color-verde-vibrante);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-verde-vibrante-hover);
 }
 
 .btn-secondary {
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background-color: var(--color-naranja-calido);
+  border-color: var(--color-naranja-calido);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-naranja-calido-hover);
 }
 
 .card-img-top {
