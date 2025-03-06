@@ -69,3 +69,50 @@ async function iniciarSesion() {
     
     
 </template>
+
+<style scoped>
+body {
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    color: black; /* Texto negro */
+    font-weight: bold;
+}
+
+input {
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+    border: 1px solid black; /* Borde negro */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+input:focus {
+    border-color: black; /* Borde negro al enfocar */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.btn-primary {
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.btn-primary:hover {
+    background-color: white; /* Fondo blanco al pasar el ratón */
+    color: black; /* Texto negro al pasar el ratón */
+}
+
+.alert {
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    transition: opacity 0.3s ease; /* Transición suave */
+}
+</style>

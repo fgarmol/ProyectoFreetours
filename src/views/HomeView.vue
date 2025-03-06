@@ -230,66 +230,64 @@ function hideControls() {
 </template>
 
 <style scoped>
-
-
 body {
-  background-color: var(--color-fondo-claro);
-  color: var(--color-texto-principal);
+  background-color: white; /* Fondo blanco */
+  color: black; /* Texto negro */
 }
 
 .header {
-  background-color: var(--color-azul-profundo);
-  color: var(--color-fondo-claro);
+  background-color: black; /* Fondo negro */
+  color: white; /* Texto blanco */
   padding: 1rem;
 }
 
 .carousel-indicators button {
-  background-color: var(--color-amarillo-solar);
+  background-color: black; /* Fondo negro */
 }
 
 .carousel-indicators button:hover {
-  background-color: var(--color-azul-profundo);
+  background-color: white; /* Fondo blanco al pasar el ratón */
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  filter: invert(1);
+  filter: invert(1); /* Iconos blancos */
 }
 
 .carousel-control-prev-icon:hover,
 .carousel-control-next-icon:hover {
-  filter: invert(0.5);
+  filter: invert(0.5); /* Iconos grises al pasar el ratón */
 }
 
 .card {
-  background-color: var(--color-fondo-claro); /* Fondo de las tarjetas */
-  border: 1px solid var(--color-azul-profundo);
+  background-color: white; /* Fondo blanco */
+  border: 1px solid black; /* Borde negro */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+.card:hover {
+  transform: scale(1.05); /* Efecto de zoom al pasar el ratón */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
 .card-title {
-  color: var(--color-azul-profundo);
+  color: black; /* Texto negro */
 }
 
 .card-subtitle {
-  color: var(--color-texto-secundario);
+  color: gray; /* Texto gris */
 }
 
-.btn-primary {
-  background-color: var(--color-verde-vibrante);
-  border-color: var(--color-verde-vibrante);
+.btn-primary, .btn-secondary {
+  background-color: black; /* Fondo negro */
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
 }
 
-.btn-primary:hover {
-  background-color: var(--color-verde-vibrante-hover);
-}
-
-.btn-secondary {
-  background-color: var(--color-naranja-calido);
-  border-color: var(--color-naranja-calido);
-}
-
-.btn-secondary:hover {
-  background-color: var(--color-naranja-calido-hover);
+.btn-primary:hover, .btn-secondary:hover {
+  background-color: white; /* Fondo blanco al pasar el ratón */
+  color: black; /* Texto negro al pasar el ratón */
 }
 
 .card-img-top {
@@ -297,13 +295,17 @@ body {
   object-fit: cover;
 }
 
-.carousel-video {
-  height: 530px; /* Ajusta esta altura para que coincida con la altura de las imágenes */
+.carousel-video, .carousel-item img {
+  width: 100%;
+  height: 300px; /* Ajusta esta altura para que coincida con la altura de las imágenes */
   object-fit: cover;
 }
 
 .video-container {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .video-controls {
@@ -341,6 +343,10 @@ body {
   padding-bottom: 5rem;
 }
 
+.card-body-search {
+  padding: 1rem;
+}
+
 @media (min-width: 768px) {
   .card-img-top {
     height: auto;
@@ -359,6 +365,7 @@ body {
     justify-content: center;
     width: 50%; /* Asegura que el cuerpo de la tarjeta tenga el mismo ancho */
   }
+
   .card-body-search {
     padding: 1rem;
   }

@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import router from '@/router';
@@ -195,7 +194,7 @@ function cancelarReserva(reservaId) {
 
 <template>
     <div class="container">
-        <div class="alert" role="alert"></div>
+        
         <h1>Mis Reservas</h1>
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -298,6 +297,8 @@ function cancelarReserva(reservaId) {
 <style scoped>
 .container {
     padding-bottom: 5rem;
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
 }
 
 .card-deck {
@@ -309,14 +310,43 @@ function cancelarReserva(reservaId) {
 .card {
     margin: 10px;
     width: 18rem;
+    background-color: white; /* Fondo blanco */
+    border: 1px solid black; /* Borde negro */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Efecto de zoom al pasar el ratón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.card-title {
+    color: black; /* Texto negro */
+}
+
+.card-text {
+    color: gray; /* Texto gris */
 }
 
 .nav-tabs {
     margin-bottom: 1rem;
+    border-bottom: 1px solid black; /* Borde negro */
 }
 
 .nav-link {
     cursor: pointer;
+    color: black; /* Texto negro */
+    transition: color 0.3s ease, background-color 0.3s ease; /* Transición suave */
+}
+
+.nav-link.active {
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+}
+
+.nav-link:hover {
+    background-color: black; /* Fondo negro al pasar el ratón */
+    color: white; /* Texto blanco al pasar el ratón */
 }
 
 .modal {
@@ -329,5 +359,38 @@ function cancelarReserva(reservaId) {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.modal-content {
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+    border: 1px solid black; /* Borde negro */
+}
+
+.modal-header, .modal-footer {
+    border-bottom: 1px solid black; /* Borde negro */
+}
+
+.modal-header .close {
+    color: black; /* Texto negro */
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+    background-color: white; /* Fondo blanco al pasar el ratón */
+    color: black; /* Texto negro al pasar el ratón */
+}
+
+.alert {
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    transition: opacity 0.3s ease; /* Transición suave */
 }
 </style>

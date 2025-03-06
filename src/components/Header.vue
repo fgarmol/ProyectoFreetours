@@ -31,7 +31,7 @@ function cerrarSesion() {
         </router-link>
 
         <div v-if="usuarioAutenticado.autenticado" class="d-flex align-items-center justify-content-end">
-          <span class="me-3">Bienvenido, {{ usuarioAutenticado.usuario.nombre }} ({{ usuarioAutenticado.usuario.rol }})</span>
+          <span class="bienvenido-text me-3">Bienvenido, {{ usuarioAutenticado.usuario.nombre }} ({{ usuarioAutenticado.usuario.rol }})</span>
           <button @click.prevent="cerrarSesion" class="btn btn-danger">Cerrar Sesión</button>
         </div>
       </div>
@@ -75,6 +75,7 @@ function cerrarSesion() {
   font-size: 1.5rem;
   font-weight: bold;
   color: black; /* Texto negro */
+  white-space: nowrap; /* Evita que el título se divida en varias líneas */
 }
 
 .actions {
@@ -96,7 +97,8 @@ function cerrarSesion() {
   color: black; /* Texto negro al pasar el ratón */
   font-weight: bolder;
 }
-.btn-login:active, .btn-success:active, .btn-danger:active{
+
+.btn-login:active, .btn-success:active, .btn-danger:active {
   background-color: black;
   color: white;
   box-shadow: inset 1px 1px 30px white;
@@ -106,5 +108,32 @@ function cerrarSesion() {
   max-width: none !important;
   margin: 0;
   padding-bottom: 0;
+}
+@media (max-width: 1130px){
+  .bienvenido-text{
+    display: none;
+  }
+}
+/* Media query para ajustar el diseño en pantallas pequeñas */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    position: static;
+    transform: none;
+    margin-bottom: 10px;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .bienvenido-text {
+    display: none;
+  }
 }
 </style>

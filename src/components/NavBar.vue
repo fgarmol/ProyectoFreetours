@@ -1,15 +1,24 @@
 <script setup>
 import { ref } from 'vue';
-import bootstrapBundle from 'bootstrap/dist/js/bootstrap.bundle';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle';
 
 const props = defineProps({
     datos: Object,
 });
+
+function closeMenu() {
+    const navbarCollapse = document.getElementById('navbarSupportedContent');
+    const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+        toggle: false
+    });
+    bsCollapse.hide();
+}
 </script>
 
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark bg-custom">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -17,13 +26,13 @@ const props = defineProps({
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav m-auto">
                 <li class="nav-item">
-                    <RouterLink class="nav-link" to="/">Home</RouterLink>
+                    <RouterLink class="nav-link" to="/" @click="closeMenu">Home</RouterLink>
                 </li>
                 <li class="nav-item" v-if="datos?.autenticado && datos?.usuario.rol != 'guia'">
-                    <RouterLink class="nav-link" to="/tus-reservas">Mis Reservas</RouterLink>
+                    <RouterLink class="nav-link" to="/tus-reservas" @click="closeMenu">Mis Reservas</RouterLink>
                 </li>
                 <li class="nav-item" v-if="datos?.autenticado && datos?.usuario.rol == 'guia'">
-                    <RouterLink class="nav-link" to="/guia/rutas">Rutas Asignadas</RouterLink>
+                    <RouterLink class="nav-link" to="/guia/rutas" @click="closeMenu">Rutas Asignadas</RouterLink>
                 </li>
                     
                 <li class="nav-item" v-if="datos?.autenticado && datos?.usuario.rol == 'admin'">
@@ -33,8 +42,8 @@ const props = defineProps({
                             Admin
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <RouterLink class="dropdown-item" to="/admin">Usuarios</RouterLink>
-                            <RouterLink class="dropdown-item" to="/admin/rutas">Rutas</RouterLink>
+                            <RouterLink class="dropdown-item" to="/admin" @click="closeMenu">Usuarios</RouterLink>
+                            <RouterLink class="dropdown-item" to="/admin/rutas" @click="closeMenu">Rutas</RouterLink>
                         </div>
                     </div>
                 </li>
@@ -44,35 +53,29 @@ const props = defineProps({
 </template>
 
 <style scoped>
-
-
-    
-
 .navbar.bg-custom {
     background-color: black; 
 }
 
 .nav-link {
     color: white;
-     
 }
 
 .nav-link:hover {
-    color:white;
+    color: white;
     font-weight: bolder;
 }
 
 .nav-link.active {
     font-size: larger;
-     
 }
 
 .dropdown-menu .dropdown-item {
-    color: var(--color-texto-principal) !important; /* Negro */
+    color: black !important; /* Negro */
 }
 
 .dropdown-menu .dropdown-item:hover {
-    background-color: var(--color-secundario-1) !important; /* Amarillo Dorado */
-    color: var(--color-texto-principal) !important; /* Negro */
+    background-color: yellow !important; /* Amarillo Dorado */
+    color: black !important; /* Negro */
 }
 </style>
