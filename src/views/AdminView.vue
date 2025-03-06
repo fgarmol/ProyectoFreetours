@@ -206,9 +206,9 @@ const totalUsuarios = computed(() => users.value.length);
     </div>
     
     <div class="pagination d-flex justify-content-center mt-3">
-      <button @click="paginaAnterior" :disabled="paginaActual === 1" class="btn btn-primary btn-sm">Anterior</button>
-      <span class="mx-2">Página {{ paginaActual }} de {{ totalPaginas }}</span>
-      <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas" class="btn btn-primary btn-sm">Siguiente</button>
+      <button @click="paginaAnterior" :disabled="paginaActual === 1" class="btn btn-secondary me-2">Anterior</button>
+      <span class="align-self-center">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas" class="btn btn-secondary ms-2">Siguiente</button>
     </div>
   </div>
 
@@ -242,44 +242,86 @@ const totalUsuarios = computed(() => users.value.length);
 </template>
 
 <style scoped>
-footer {
-  margin-top: auto;
-  background-color: #f1f1f1;
-  text-align: center;
-  padding: 10px;
+body {
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
 }
 
 .container {
-  flex: 1;
-  overflow-y: auto;
-  padding-bottom: 5rem;
+    padding-bottom: 5rem;
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
 }
 
-body,
-html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+.table {
+    background-color: white; /* Fondo blanco */
+    border: 1px solid black; /* Borde negro */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
 }
 
-.layout {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+.table th, .table td {
+    color: black; /* Texto negro */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9; /* Fondo gris claro para filas impares */
+}
+
+.table-striped tbody tr:hover {
+    background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
+}
+
+.btn-primary, .btn-secondary {
+  background-color: black; /* Fondo negro */
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  background-color: whitesmoke; /* Fondo blanco al pasar el ratón */
+  color: black; /* Texto negro al pasar el ratón */
+}
+
+.btn-danger {
+  background-color: black; /* Fondo negro */
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* Transición suave */
+}
+
+.btn-danger:hover {
+  background-color: red; /* Fondo rojo al pasar el ratón */
+  color: white; /* Texto blanco al pasar el ratón */
+  transform: scale(1.1); /* Efecto de escala al pasar el ratón */
+}
+
+.modal-content {
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+    border: 1px solid black; /* Borde negro */
+}
+
+.modal-header, .modal-footer {
+    border-bottom: 1px solid black; /* Borde negro */
+}
+
+.modal-header .btn-close {
+    color: black; /* Texto negro */
 }
 
 .pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
 }
 
 .pagination button {
-  margin: 0 0.5rem;
+    margin: 0 0.5rem;
 }
 
 .counters {
-  margin: 1rem 0;
+    margin: 1rem 0;
 }
 </style>

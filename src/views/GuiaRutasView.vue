@@ -109,11 +109,75 @@ onMounted(() => {
 </template>
 
 <style scoped>
+body {
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+}
+
 .container {
     padding-bottom: 5rem;
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+}
+
+.card {
+    background-color: white; /* Fondo blanco */
+    border: 1px solid black; /* Borde negro */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Efecto de zoom al pasar el ratón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.card-title {
+    color: black; /* Texto negro */
+}
+
+.card-text {
+    color: gray; /* Texto gris */
+}
+
+.btn-primary {
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.btn-primary:hover {
+    background-color: white; /* Fondo blanco al pasar el ratón */
+    color: black; /* Texto negro al pasar el ratón */
 }
 
 .accordion-button {
-    cursor: pointer;
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.accordion-button:hover {
+    background-color: white; /* Fondo blanco al pasar el ratón */
+    color: black; /* Texto negro al pasar el ratón */
+}
+
+.accordion-item {
+    border: 1px solid black; /* Borde negro */
+}
+
+.accordion-body {
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: black; /* Fondo negro */
+    color: white; /* Texto blanco */
+}
+
+.accordion-button:not(.collapsed)::after {
+    filter: invert(1); /* Icono blanco */
 }
 </style>

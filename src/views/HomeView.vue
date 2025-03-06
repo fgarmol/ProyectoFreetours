@@ -205,7 +205,7 @@ function hideControls() {
                 <h5 class="card-title">{{ tour.titulo }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ tour.localidad }}</h6>
                 <div class="d-flex align-items-center mb-2">
-                  <span class="text-warning">⭐⭐⭐⭐⭐</span>
+                  <!-- <span class="text-warning">⭐⭐⭐⭐⭐</span> -->
                   <span class="ms-2 text-muted">({{ tour.asistentes }} asistentes)</span>
                 </div>
                 <p class="card-text">{{ tour.descripcion }}</p>
@@ -286,7 +286,7 @@ body {
 }
 
 .btn-primary:hover, .btn-secondary:hover {
-  background-color: white; /* Fondo blanco al pasar el ratón */
+  background-color: wheat; /* Fondo blanco al pasar el ratón */
   color: black; /* Texto negro al pasar el ratón */
 }
 
