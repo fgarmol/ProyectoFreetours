@@ -70,12 +70,24 @@ function closeMenu() {
     font-size: larger;
 }
 
-.dropdown-menu .dropdown-item {
-    color: black !important; /* Negro */
+.dropdown-menu, .dropdown-item {
+    border-radius: 5px;
+    padding-bottom: 5%;
+    
+    color: white;
+    background-color: black;
+    
+    
 }
 
 .dropdown-menu .dropdown-item:hover {
-    background-color: yellow !important; /* Amarillo Dorado */
-    color: black !important; /* Negro */
+    font-weight: bold;
+    background-color: white; 
+    color: black !important;
+}
+
+.dropdown-menu{
+    padding-top: 0;
+    padding-bottom: 0;
 }
 </style>
