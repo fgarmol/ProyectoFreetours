@@ -212,7 +212,7 @@ function hideControls() {
                 <p class="card-text"><small class="text-muted">Duración: {{ tour.hora }}</small></p>
                 <p class="card-text"><small class="text-muted">Operador: {{ tour.guia_nombre }}</small></p>
                 <p class="card-text"><small class="text-muted">Fecha: {{ tour.fecha }}</small></p>
-                <router-link :to="'/rutas/' + tour.id" class="btn btn-primary mt-auto">Reservar</router-link>
+                <router-link :to="'/rutas/' + tour.id" class="btn btn-secondary mt-auto">Reservar</router-link>
               </div>
             </div>
           </div>
@@ -286,9 +286,11 @@ body {
 }
 
 .btn-primary:hover, .btn-secondary:hover {
-  background-color: wheat; /* Fondo blanco al pasar el ratón */
-  color: black; /* Texto negro al pasar el ratón */
+  background-color: rgba(0, 0, 0, 0.295);
+  color: black;
+   
 }
+
 
 .card-img-top {
   height: 200px;

@@ -380,6 +380,7 @@ function cancelarReserva(reservaId) {
     color: white; /* Texto blanco */
     border: none; /* Sin borde */
     transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+    margin-bottom: 0.5rem;
 }
 
 .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {

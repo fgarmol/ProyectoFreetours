@@ -154,7 +154,7 @@ function cancelarRuta(rutaId) {
 
 onMounted(() => {
     cargarRutas();
-    
+
 });
 
 const rutasPendientes = computed(() => {
@@ -223,14 +223,14 @@ function calcularMedia() {
 }
 
 function obtenerMedia(idruta) {
-  // Convertir el id a número para asegurar la comparación
-  const id = Number(idruta);
-  /* console.log('Medias almacenadas en mediasCalculadas:', mediasCalculadas.value); */
-  const media = mediasCalculadas.value.find(item => item.ruta_id === id);
-  if (!media) {
-    /* console.log(`No se encontró media para la ruta ${idruta}`); */
-  }
-  return media ? media.media : null;
+    // Convertir el id a número para asegurar la comparación
+    const id = Number(idruta);
+    /* console.log('Medias almacenadas en mediasCalculadas:', mediasCalculadas.value); */
+    const media = mediasCalculadas.value.find(item => item.ruta_id === id);
+    if (!media) {
+        /* console.log(`No se encontró media para la ruta ${idruta}`); */
+    }
+    return media ? media.media : null;
 }
 
 
@@ -300,7 +300,7 @@ function closeModal() {
 <template>
     <div class="container">
         <h1>Administrar rutas</h1>
-        
+
         <div class="mb-3">
             <router-link to="/admin/rutas/crearRuta" class="btn btn-primary">Crear ruta</router-link>
         </div>
@@ -357,10 +357,11 @@ function closeModal() {
                                     </select>
                                 </td>
                                 <td>
-                                    <button @click="cancelarRuta(ruta.id)" class="btn btn-danger btn-sm">Eliminar</button>
+                                    <button @click="cancelarRuta(ruta.id)"
+                                        class="btn btn-danger btn-sm">Eliminar</button>
                                     <button @click="openModal(ruta)" class="btn btn-secondary btn-sm">Duplicar</button>
                                     <span v-if="ruta.asistentes < 10" class="text-warning">
-                                        <i class="fas fa-exclamation-triangle"></i>❗
+                                        <i class="fas fa-exclamation-triangle"></i>❗-10 asistentes
                                     </span>
                                 </td>
                             </tr>
@@ -410,8 +411,10 @@ function closeModal() {
                                     </select>
                                 </td>
                                 <td>
-                                    <button @click="cancelarRuta(ruta.id)" class="btn btn-danger btn-sm">Eliminar</button>
-                                    <button @click="openModal(ruta)" class="btn btn-secondary btn-sm">Duplicar</button>
+                                    <button @click="cancelarRuta(ruta.id)"
+                                        class="btn btn-danger btn-sm me-2 mb-2">Eliminar</button>
+                                    <button @click="openModal(ruta)"
+                                        class="btn btn-secondary btn-sm mb-2">Duplicar</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -421,9 +424,11 @@ function closeModal() {
         </div>
 
         <div class="pagination d-flex justify-content-center mt-3">
-            <button @click="paginaAnterior" :disabled="paginaActual === 1" class="btn btn-secondary me-2">Anterior</button>
-      <span class="align-self-center">Página {{ paginaActual }} de {{ totalPaginas }}</span>
-      <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas" class="btn btn-secondary ms-2">Siguiente</button>
+            <button @click="paginaAnterior" :disabled="paginaActual === 1"
+                class="btn btn-secondary me-2">Anterior</button>
+            <span class="align-self-center">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas"
+                class="btn btn-secondary ms-2">Siguiente</button>
         </div>
     </div>
 
@@ -462,65 +467,100 @@ function closeModal() {
 <style scoped>
 .container {
     padding-bottom: 5rem;
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    /* Texto negro */
 }
 
 .table {
-    background-color: white; /* Fondo blanco */
-    border: 1px solid black; /* Borde negro */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+    background-color: white;
+    /* Fondo blanco */
+    border: 1px solid black;
+    /* Borde negro */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Transición suave */
 }
 
-.table th, .table td {
-    color: black; /* Texto negro */
+.table th,
+.table td {
+    color: black;
+    /* Texto negro */
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f9f9f9; /* Fondo gris claro para filas impares */
+    background-color: #f9f9f9;
+    /* Fondo gris claro para filas impares */
 }
 
 .table-striped tbody tr:hover {
-    background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
+    background-color: #f1f1f1;
+    /* Fondo gris claro al pasar el ratón */
 }
 
-.btn-primary, .btn-secondary {
-  background-color: black; /* Fondo negro */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+.btn-primary {
+    background-color: black;
+    /* Fondo negro */
+    color: white;
+    /* Texto blanco */
+    border: none;
+    /* Sin borde */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Transición suave */
 }
 
-.btn-primary:hover, .btn-secondary:hover {
-  background-color: white; /* Fondo blanco al pasar el ratón */
-  color: black; /* Texto negro al pasar el ratón */
+.btn-primary:hover,
+.btn-secondary:hover {
+    background-color: white;
+    /* Fondo blanco al pasar el ratón */
+    color: black;
+    /* Texto negro al pasar el ratón */
 }
 
 .btn-danger {
-  background-color: black; /* Fondo negro */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* Transición suave */
+    background-color: black;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    margin-bottom: 0.5rem; /* Ajuste del margen inferior */
+    margin-right: 0.5rem; /* Ajuste del margen derecho */
+}
+
+.btn-secondary {
+    background-color: grey;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    margin-bottom: 0.5rem; /* Ajuste del margen inferior */
 }
 
 .btn-danger:hover {
-  background-color: red; /* Fondo rojo al pasar el ratón */
-  color: white; /* Texto blanco al pasar el ratón */
-  transform: scale(1.1); /* Efecto de escala al pasar el ratón */
+    background-color: red;
+    /* Fondo rojo al pasar el ratón */
+    color: white;
+    /* Texto blanco al pasar el ratón */
+    transform: scale(1.1);
+    /* Efecto de escala al pasar el ratón */
 }
 
 .modal-content {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-    border: 1px solid black; /* Borde negro */
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    /* Texto negro */
+    border: 1px solid black;
+    /* Borde negro */
 }
 
-.modal-header, .modal-footer {
-    border-bottom: 1px solid black; /* Borde negro */
+.modal-header,
+.modal-footer {
+    border-bottom: 1px solid black;
+    /* Borde negro */
 }
 
 .modal-header .btn-close {
-    color: black; /* Texto negro */
+    color: black;
+    /* Texto negro */
 }
 
 .pagination {
@@ -540,22 +580,29 @@ function closeModal() {
 
 .nav-tabs {
     margin-bottom: 1rem;
-    border-bottom: 1px solid black; /* Borde negro */
+    border-bottom: 1px solid black;
+    /* Borde negro */
 }
 
 .nav-link {
     cursor: pointer;
-    color: black; /* Texto negro */
-    transition: color 0.3s ease, background-color 0.3s ease; /* Transición suave */
+    color: black;
+    /* Texto negro */
+    transition: color 0.3s ease, background-color 0.3s ease;
+    /* Transición suave */
 }
 
 .nav-link.active {
-    background-color: black !important; /* Fondo negro */
-    color: white !important; /* Texto blanco */
+    background-color: black !important;
+    /* Fondo negro */
+    color: white !important;
+    /* Texto blanco */
 }
 
 .nav-link:hover {
-    background-color: black; /* Fondo negro al pasar el ratón */
-    color: white; /* Texto blanco al pasar el ratón */
+    background-color: black;
+    /* Fondo negro al pasar el ratón */
+    color: white;
+    /* Texto blanco al pasar el ratón */
 }
 </style>

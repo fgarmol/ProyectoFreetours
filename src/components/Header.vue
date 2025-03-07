@@ -76,6 +76,7 @@ function cerrarSesion() {
   font-weight: bold;
   color: black; /* Texto negro */
   white-space: nowrap; /* Evita que el título se divida en varias líneas */
+  font-family: 'Playfair Display', serif;
 }
 
 .actions {

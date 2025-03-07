@@ -206,13 +206,57 @@ const searchLocation = async () => {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 .container {
     padding-bottom: 5rem;
+    background-color: white; /* Fondo blanco */
+    color: black; /* Texto negro */
+    font-family: 'Roboto', sans-serif; /* Fuente minimalista */
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: black;
+}
+
+.form-control {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: black;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary, .btn-secondary {
+    background-color: black;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    background-color: white;
+    color: black;
+    transform: scale(1.05);
 }
 
 #map {
     height: 300px;
     margin-top: 1rem;
+    border: 1px solid black;
 }
 
 .footer {

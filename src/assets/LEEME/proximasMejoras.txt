@@ -5,6 +5,8 @@ instrucciones notify:
 - npm install jquery
 
 
+dejar claro donde estamos, con active al navbar
+
 
 
 
