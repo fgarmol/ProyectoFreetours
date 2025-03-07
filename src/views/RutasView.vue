@@ -114,7 +114,7 @@ function formatDate(dateString) {
             </form>
         </div>
         <div v-else class="alert alert-danger">
-            <p class="alert">Debes estar logueado para reservar una ruta</p>
+            <p class="alert">Debes iniciar sesión para reservar una ruta</p>
         </div>
 
         
