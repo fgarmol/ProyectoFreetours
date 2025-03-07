@@ -383,9 +383,24 @@ function cancelarReserva(reservaId) {
     margin-bottom: 0.5rem;
 }
 
-.btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+.btn-primary:hover, .btn-secondary:hover {
     background-color: white; /* Fondo blanco al pasar el ratón */
-    color: black; /* Texto negro al pasar el ratón */
+    color: black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  transform: scale(1.05); /* Transición de escala */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */ /* Texto negro al pasar el ratón */
+}
+.btn-danger:hover {
+    background-color: red;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+    transform: scale(1.05); /* Transición de escala */
+    transition: background-color 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+.btn-primary:active, .btn-secondary:active{
+    background-color: black;
+  color: white;
+  box-shadow: inset 1px 1px 30px white;
 }
 
 .alert {

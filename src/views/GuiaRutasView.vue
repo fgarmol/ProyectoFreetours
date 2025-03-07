@@ -82,7 +82,7 @@ onMounted(() => {
                 <p class="card-text"><strong>Fecha:</strong> {{ ruta.ruta_fecha }}</p>
                 <p class="card-text"><strong>Hora:</strong> {{ ruta.ruta_hora }}</p>
                 <p class="card-text"><strong>Total de Asistentes:</strong> {{ calcularTotalAsistentes(ruta) }}</p>
-                <button @click="verAsistentes(ruta)" class="btn btn-primary">Ver Asistentes</button>
+                <button @click="verAsistentes(ruta)" class="btn btn-secondary">Ver Asistentes</button>
                 <div v-if="selectedRuta && selectedRuta.ruta_id === ruta.ruta_id" class="accordion mt-3">
                     <div v-for="asistente in asistentes" :key="asistente.reserva_id" class="accordion-item">
                         <h2 class="accordion-header">
@@ -97,7 +97,7 @@ onMounted(() => {
                                         <label for="numPersonas" class="form-label">Número de asistentes</label>
                                         <input type="number" v-model="asistente.num_personas" class="form-control" id="numPersonas" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                    <button type="submit" class="btn btn-secondary">Actualizar</button>
                                 </form>
                             </div>
                         </div>
@@ -139,16 +139,19 @@ body {
     color: gray; /* Texto gris */
 }
 
-.btn-primary {
+.btn-secondary {
     background-color: black; /* Fondo negro */
     color: white; /* Texto blanco */
     border: none; /* Sin borde */
     transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
 }
 
-.btn-primary:hover {
-    background-color: white; /* Fondo blanco al pasar el ratón */
+.btn-secondary:hover {
+    background-color: whitesmoke; /* Fondo blanco al pasar el ratón */
     color: black; /* Texto negro al pasar el ratón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  transform: scale(1.05); /* Transición de escala */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
 }
 
 .accordion-button {
@@ -161,6 +164,9 @@ body {
 .accordion-button:hover {
     background-color: white; /* Fondo blanco al pasar el ratón */
     color: black; /* Texto negro al pasar el ratón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+   /* Transición de escala */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
 }
 
 .accordion-item {

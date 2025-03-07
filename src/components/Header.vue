@@ -78,6 +78,11 @@ function cerrarSesion() {
   white-space: nowrap; /* Evita que el título se divida en varias líneas */
   font-family: 'Playfair Display', serif;
 }
+.bienvenido-text {
+  font-family: 'Playfair Display', serif; /* Aplicar la nueva fuente */
+  font-size: 1.2rem;
+  color: black; /* Texto negro */
+}
 
 .actions {
   display: flex;
@@ -86,17 +91,21 @@ function cerrarSesion() {
 
 .btn-login, .btn-success, .btn-danger {
   transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
-  font-weight: bold;
+  font-weight:600 ;
   background-color: black; /* Fondo negro */
   color: white; /* Texto blanco */
   border: none; /* Sin borde */
+  
 }
 
 .btn-login:hover, .btn-success:hover, .btn-danger:hover {
   opacity: 0.8;
-  background-color: white; /* Fondo blanco al pasar el ratón */
+  background-color: whitesmoke; /* Fondo blanco al pasar el ratón */
   color: black; /* Texto negro al pasar el ratón */
   font-weight: bolder;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  transform: scale(1.05); /* Transición de escala */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
 }
 
 .btn-login:active, .btn-success:active, .btn-danger:active {

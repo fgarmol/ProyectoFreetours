@@ -62,7 +62,7 @@ async function iniciarSesion() {
         <input v-model="form.usuario" type="text" id="usuario" class="form-control" placeholder="Usuario" required />
         <label class="mt-3" for="password">Contraseña</label>
         <input v-model="form.password" type="password" class="form-control" placeholder="Contraseña" required />
-        <button type="submit" class="btn btn-primary mt-3">Iniciar Sesión</button>
+        <button type="submit" class="btn btn-secondary mt-3">Iniciar Sesión</button>
     </div>
     </form>
     <div id="alert" style="display: none;"></div>
@@ -97,17 +97,23 @@ input:focus {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
-.btn-primary {
+.btn-secondary {
     background-color: black; /* Fondo negro */
     color: white; /* Texto blanco */
     border: none; /* Sin borde */
     transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
 }
 
-.btn-primary:hover {
+.btn-secondary:hover {
     background-color: white; /* Fondo blanco al pasar el ratón */
     color: black; /* Texto negro al pasar el ratón */
 }
+.btn-secondary:active{
+    background-color: black;
+  color: white;
+  box-shadow: inset 1px 1px 30px white;
+}
+
 
 .alert {
     background-color: black; /* Fondo negro */

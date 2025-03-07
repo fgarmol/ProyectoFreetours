@@ -302,7 +302,7 @@ function closeModal() {
         <h1>Administrar rutas</h1>
 
         <div class="mb-3">
-            <router-link to="/admin/rutas/crearRuta" class="btn btn-primary">Crear ruta</router-link>
+            <router-link to="/admin/rutas/crearRuta" class="btn btn-secondary">Crear ruta</router-link>
         </div>
 
         <div class="counters d-flex justify-content-end mb-3">
@@ -457,7 +457,7 @@ function closeModal() {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" @click="duplicarRuta">Duplicar Ruta</button>
+                    <button type="button" class="btn btn-secondary" @click="duplicarRuta">Duplicar Ruta</button>
                 </div>
             </div>
         </div>
@@ -498,23 +498,23 @@ function closeModal() {
     /* Fondo gris claro al pasar el ratón */
 }
 
-.btn-primary {
+
+.btn-secondary {
     background-color: black;
-    /* Fondo negro */
     color: white;
-    /* Texto blanco */
     border: none;
-    /* Sin borde */
-    transition: background-color 0.3s ease, color 0.3s ease;
-    /* Transición suave */
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    margin-bottom: 0.5rem; /* Ajuste del margen inferior */
 }
 
-.btn-primary:hover,
 .btn-secondary:hover {
-    background-color: white;
+    background-color: whitesmoke;
     /* Fondo blanco al pasar el ratón */
     color: black;
     /* Texto negro al pasar el ratón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  transform: scale(1.05); /* Transición de escala */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
 }
 
 .btn-danger {
@@ -525,14 +525,12 @@ function closeModal() {
     margin-bottom: 0.5rem; /* Ajuste del margen inferior */
     margin-right: 0.5rem; /* Ajuste del margen derecho */
 }
-
-.btn-secondary {
-    background-color: grey;
-    color: white;
-    border: none;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-    margin-bottom: 0.5rem; /* Ajuste del margen inferior */
+.btn-secondary:active{
+    background-color: black;
+  color: white;
+  box-shadow: inset 1px 1px 30px white;
 }
+
 
 .btn-danger:hover {
     background-color: red;
@@ -541,6 +539,9 @@ function closeModal() {
     /* Texto blanco al pasar el ratón */
     transform: scale(1.1);
     /* Efecto de escala al pasar el ratón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
 }
 
 .modal-content {
@@ -604,5 +605,34 @@ function closeModal() {
     /* Fondo negro al pasar el ratón */
     color: white;
     /* Texto blanco al pasar el ratón */
+}
+
+select {
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    /* Texto negro */
+    border: 1px solid black;
+    /* Borde negro */
+    padding: 0.5rem;
+    /* Espaciado interno */
+    border-radius: 0.25rem;
+    /* Bordes redondeados */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    /* Transición suave */
+}
+
+select:hover {
+    background-color: #f1f1f1;
+    /* Fondo gris claro al pasar el ratón */
+    color: black;
+    /* Texto negro */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+}
+
+select:focus {
+    outline: none;
+    /* Sin borde de enfoque */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Sombra azul clara */
 }
 </style>

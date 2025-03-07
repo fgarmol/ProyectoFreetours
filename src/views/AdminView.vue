@@ -167,7 +167,7 @@ const totalUsuarios = computed(() => users.value.length);
   <div class="container">
     <h1>Administrar usuarios</h1>
     <div id="alert" class="alert"></div>
-    <button class="btn btn-primary mb-3" @click="mostrarModalCrearUsuario">Crear Usuario</button>
+    <button class="btn btn-secondary mb-3" @click="mostrarModalCrearUsuario">Crear Usuario</button>
     <div class="counters d-flex justify-content-end mb-3">
       <span class="fw-bold">Total de usuarios: {{ totalUsuarios }}</span>
     </div>
@@ -233,7 +233,7 @@ const totalUsuarios = computed(() => users.value.length);
               <label for="contraseña" class="form-label">Contraseña</label>
               <input type="password" v-model="newUser.contraseña" class="form-control" id="contraseña" required>
             </div>
-            <button type="submit" class="btn btn-primary">Crear</button>
+            <button type="submit" class="btn btn-secondary">Crear</button>
           </form>
         </div>
       </div>
@@ -271,16 +271,19 @@ body {
     background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
 }
 
-.btn-primary, .btn-secondary {
+ .btn-secondary {
   background-color: black; /* Fondo negro */
   color: white; /* Texto blanco */
   border: none; /* Sin borde */
   transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
 }
 
-.btn-primary:hover, .btn-secondary:hover {
+.btn-secondary:hover {
   background-color: whitesmoke; /* Fondo blanco al pasar el ratón */
   color: black; /* Texto negro al pasar el ratón */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  transform: scale(1.05); /* Transición de escala */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
 }
 
 .btn-danger {
@@ -293,7 +296,9 @@ body {
 .btn-danger:hover {
   background-color: red; /* Fondo rojo al pasar el ratón */
   color: white; /* Texto blanco al pasar el ratón */
-  transform: scale(1.1); /* Efecto de escala al pasar el ratón */
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */ /* Efecto de escala al pasar el ratón */
 }
 
 .modal-content {
@@ -315,6 +320,18 @@ body {
     justify-content: center;
     align-items: center;
     margin-top: 1rem;
+}
+
+.form-select {
+  background-color: white; /* Fondo blanco */
+  color: black; /* Texto negro */
+  border: 1px solid black; /* Borde negro */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+}
+
+.form-select:hover {
+  background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
+  color: black; /* Texto negro al pasar el ratón */
 }
 
 .pagination button {

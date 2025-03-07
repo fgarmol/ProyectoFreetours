@@ -193,7 +193,7 @@ const searchLocation = async () => {
                     </option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Crear</button>
+            <button type="submit" class="btn btn-secondary">Crear</button>
 
             <div class="form-group mt-3">
                 <input v-model="address" @keyup.enter="searchLocation" placeholder="Buscar dirección"
@@ -210,9 +210,12 @@ const searchLocation = async () => {
 
 .container {
     padding-bottom: 5rem;
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-    font-family: 'Roboto', sans-serif; /* Fuente minimalista */
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    /* Texto negro */
+    font-family: 'Roboto', sans-serif;
+    /* Fuente minimalista */
 }
 
 h1 {
@@ -240,17 +243,24 @@ h1 {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-.btn-primary, .btn-secondary {
+.btn-secondary {
+    margin-top: 1rem;
     background-color: black;
     color: white;
     border: none;
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-.btn-primary:hover, .btn-secondary:hover {
+.btn-secondary:hover {
     background-color: white;
     color: black;
     transform: scale(1.05);
+}
+
+.btn-secondary:active {
+    background-color: black;
+    color: white;
+    box-shadow: inset 1px 1px 30px white;
 }
 
 #map {

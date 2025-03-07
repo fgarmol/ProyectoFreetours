@@ -286,9 +286,17 @@ body {
 }
 
 .btn-primary:hover, .btn-secondary:hover {
-  background-color: rgba(0, 0, 0, 0.295);
+  background-color: whitesmoke;
   color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+  transform: scale(1.05); /* Transición de escala */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
    
+}
+.btn-primary:active, .btn-secondary:active{
+  background-color: black;
+  color: white;
+  box-shadow: inset 1px 1px 30px white;
 }
 
 
