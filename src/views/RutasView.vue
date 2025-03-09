@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
+import router from '@/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-notify';
 import L from 'leaflet';
@@ -82,6 +83,10 @@ function reservar() {
             if (data.status === 'success') {
                 showAlert('Reserva realizada exitosamente', true);
                 obtenerRuta();
+
+                // Redirige a la página principal con un timeout de 2 segundos
+                setTimeout(() => router.push('/'), 2000);
+                
             } else {
                 showAlert(data.message, false);
             }
@@ -109,9 +114,9 @@ function initMap(lat, lng) {
 
 <template>
     <div v-if="ruta" class="container">
-        <div class="d-flex align-items-start">
+        <div class="row">
             <!-- título, descripción, fecha, hora, localidad, guía y asistentes de la ruta -->
-            <div class="me-3">
+            <div class="col-md-8">
                 <h1>{{ ruta.titulo }}</h1>
                 <p>{{ ruta.descripcion }}</p>
                 <p>Fecha: {{ formatDate(ruta.fecha) }} </p>
@@ -121,8 +126,8 @@ function initMap(lat, lng) {
                 <p>Asistentes: {{ ruta.asistentes }}</p>
             </div>
             <!-- imagen de la ruta -->
-            <div class="foto h-100">
-                <img :src="ruta.foto" alt="Foto de la ruta" class="img-fluid mb-3" />
+            <div class="col-md-4 foto">
+                <img :src="ruta.foto" alt="Foto de la ruta" class="img-fluid mb-3 w-100" />
             </div>
         </div>
 
@@ -227,9 +232,14 @@ input:focus {
     /* Transición suave */
 }
 
-.full-width {
-    width: 100%;
+.foto {
+    height: 100%;
+    overflow: hidden; /* Asegura que el contenido no se desborde */
 }
 
-
+.foto img {
+    height: 100%;
+    width: auto;
+    object-fit: cover; /* Ajusta la imagen para que cubra el contenedor sin distorsión */
+}
 </style>
