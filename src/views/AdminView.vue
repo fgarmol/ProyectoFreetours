@@ -101,21 +101,58 @@ function crearUsuario() {
     .catch(error => showAlert(`Error al crear el usuario: ${error.message}`, false));
 }
 
-function actualizarRol(usuario) {
-  const updatedRole = {
-    rol: usuario.rol
-  };
-  fetch(`http://localhost/APIFreetours/api.php/usuarios?id=${usuario.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(updatedRole)
-  })
-    .then(response => response.json())
-    .then(data => console.log('Respuesta:', data))
-    .catch(error => console.error('Error:', error));
+function tieneRutasAsignadas(usuarioId) {
+  return fetch(`http://localhost/APIFreetours/api.php/asignaciones?guia_id=${usuarioId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      return data.length > 0;
+    })
+    .catch(error => {
+      console.error('Error al comprobar rutas asignadas:', error);
+      showAlert(`Error al comprobar rutas asignadas: ${error.message}`, false);
+      return false;
+    });
 }
+
+function actualizarRol(usuario) {
+  
+  tieneRutasAsignadas(usuario.id).then(tieneRutas => {
+    if (tieneRutas && usuario.rol !== 'guia') {
+      showAlert('No se puede cambiar el rol de un guía con rutas asignadas', false);
+      usuario.rol = 'guia'; // Revertir el cambio de rol
+      return;
+    }
+
+    const updatedRole = {
+      rol: usuario.rol
+    };
+    fetch(`http://localhost/APIFreetours/api.php/usuarios?id=${usuario.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updatedRole)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Respuesta:', data);
+        showAlert('Rol actualizado exitosamente', true);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showAlert(`Error al actualizar el rol: ${error.message}`, false);
+      });
+  }).catch(error => {
+    console.error('Error al verificar rutas asignadas:', error);
+    showAlert(`Error al verificar rutas asignadas: ${error.message}`, false);
+  });
+}
+
 
 function eliminarUsuario(id) {
   if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
