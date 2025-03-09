@@ -4,8 +4,10 @@ instrucciones notify:
 - npm install bootstrap-notify
 - npm install jquery
 
-
-dejar claro donde estamos, con active al navbar
+- tener en cuenta que si un guia tiene asignada una ruta, no puede cambiar de rol
+- Comentar todo el codigo
+- accesibilidad por un tubo
+- terminar de ajustar la imagen de la vista de rutas
 
 
 

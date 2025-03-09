@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-notify';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const props = defineProps({
     usuarioAutenticado: {
@@ -10,6 +12,8 @@ const props = defineProps({
         required: true
     }
 });
+
+const emit = defineEmits(['sesionIniciada']);
 
 function showAlert(message, isSuccess = false) {
     $.notify({
@@ -39,6 +43,10 @@ function obtenerRuta() {
         .then(data => {
             console.log('Ruta:', data);
             ruta.value = data;
+            // Utiliza nextTick para asegurarse de que el DOM se haya actualizado antes de inicializar el mapa con las coordenadas proporcionadas
+            nextTick(() => {
+                initMap(data.latitud, data.longitud); // Inicializa el mapa con las coordenadas
+            });
         })
         .catch(error => {
             console.error('Error:', error);
@@ -88,23 +96,44 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('es-ES', options);
 }
 
+function initMap(lat, lng) {
+    const map = L.map('map').setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup('Punto de encuentro')
+        .openPopup();
+}
 </script>
 
 <template>
     <div v-if="ruta" class="container">
-        <h1>{{ ruta.titulo }}</h1>
-        <p>{{ ruta.descripcion }}</p>
-        <p>Fecha: {{ formatDate(ruta.fecha) }} </p>
-        <p>Hora: {{ ruta.hora }}</p>
-        <p>Localidad: {{ ruta.localidad }}</p>
-        <p>Guía: {{ ruta.guia }}</p>
-        <p>Asistentes: {{ ruta.asistentes }}</p>
+        <div class="d-flex align-items-start">
+            <!-- título, descripción, fecha, hora, localidad, guía y asistentes de la ruta -->
+            <div class="me-3">
+                <h1>{{ ruta.titulo }}</h1>
+                <p>{{ ruta.descripcion }}</p>
+                <p>Fecha: {{ formatDate(ruta.fecha) }} </p>
+                <p>Hora: {{ ruta.hora }}</p>
+                <p>Localidad: {{ ruta.localidad }}</p>
+                <p>Guía: {{ ruta.guia }}</p>
+                <p>Asistentes: {{ ruta.asistentes }}</p>
+            </div>
+            <!-- imagen de la ruta -->
+            <div class="foto h-100">
+                <img :src="ruta.foto" alt="Foto de la ruta" class="img-fluid mb-3" />
+            </div>
+        </div>
+
+        <div id="map" class="full-width" style="height: 400px;"></div> <!-- Contenedor del mapa -->
 
         <div v-if="props.usuarioAutenticado.autenticado">
             <form @submit.prevent="reservar" class="form">
                 <div class="form-group mt-3">
                     <label for="email">Email:&nbsp</label>
-                    <input type="email" v-model="props.usuarioAutenticado.usuario.email" class="form-control" disabled />
+                    <input type="email" v-model="props.usuarioAutenticado.usuario.email" class="form-control"
+                        disabled />
                 </div>
                 <div class="form-group mt-3">
                     <label for="asistentes">Cantidad de asistentes:&nbsp</label>
@@ -116,25 +145,29 @@ function formatDate(dateString) {
         <div v-else class="alert alert-danger">
             <p class="alert">Debes iniciar sesión para reservar una ruta</p>
         </div>
-
-        
     </div>
 </template>
 
 <style scoped>
 body {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    /* Texto negro */
 }
 
 .container {
     padding-bottom: 5rem;
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    /* Texto negro */
 }
 
-h1, p {
-    color: black; /* Texto negro */
+h1,
+p {
+    color: black;
+    /* Texto negro */
 }
 
 .form-group {
@@ -142,38 +175,61 @@ h1, p {
 }
 
 label {
-    color: black; /* Texto negro */
+    color: black;
+    /* Texto negro */
     font-weight: bold;
 }
 
 input {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-    border: 1px solid black; /* Borde negro */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    /* Texto negro */
+    border: 1px solid black;
+    /* Borde negro */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    /* Transición suave */
 }
 
 input:focus {
-    border-color: black; /* Borde negro al enfocar */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    border-color: black;
+    /* Borde negro al enfocar */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    /* Sombra suave */
 }
 
 .btn-primary {
-    background-color: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-    border: none; /* Sin borde */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+    background-color: black;
+    /* Fondo negro */
+    color: white;
+    /* Texto blanco */
+    border: none;
+    /* Sin borde */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Transición suave */
 }
 
 .btn-primary:hover {
-    background-color: white; /* Fondo blanco al pasar el ratón */
-    color: black; /* Texto negro al pasar el ratón */
+    background-color: white;
+    /* Fondo blanco al pasar el ratón */
+    color: black;
+    /* Texto negro al pasar el ratón */
 }
 
 .alert {
-    background-color: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-    border: none; /* Sin borde */
-    transition: opacity 0.3s ease; /* Transición suave */
+    background-color: black;
+    /* Fondo negro */
+    color: white;
+    /* Texto blanco */
+    border: none;
+    /* Sin borde */
+    transition: opacity 0.3s ease;
+    /* Transición suave */
 }
+
+.full-width {
+    width: 100%;
+}
+
+
 </style>

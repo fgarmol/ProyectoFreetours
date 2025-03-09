@@ -2,6 +2,11 @@
 import { ref } from 'vue';
 import router from '@/router';
 
+const props = defineProps({
+    usuarioAutenticado: Object
+});
+
+
 const emit = defineEmits(['sesionIniciada']);
 
 const form = ref({ usuario: '', password: '' });

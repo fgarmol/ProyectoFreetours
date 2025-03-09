@@ -32,20 +32,31 @@ function cargarRutas() {
     .catch(error => console.error('Error:', error));
 }
 
+function obtenerFechaActual() {
+  const hoy = new Date();
+  const dia = String(hoy.getDate()).padStart(2, '0');
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+  const año = hoy.getFullYear();
+  return `${año}-${mes}-${dia}`;
+}
+
 const toursFiltrados = computed(() => {
+  const fechaActual = obtenerFechaActual();
+  let filtrados = tours.value.filter(tour => tour.fecha >= fechaActual);
+
   if (!localidadBusqueda.value && !fechaBusqueda.value) {
-    return tours.value;
+    return filtrados;
   } else if (localidadBusqueda.value && fechaBusqueda.value) {
-    return tours.value.filter(tour => {
+    return filtrados.filter(tour => {
       return tour.localidad.toLowerCase().includes(localidadBusqueda.value.toLowerCase()) && tour.fecha === fechaBusqueda.value;
     });
   } else if (fechaBusqueda.value) {
-    return tours.value.filter(tour => {
+    return filtrados.filter(tour => {
       return tour.fecha === fechaBusqueda.value;
     });
   }
 
-  return tours.value.filter(tour => {
+  return filtrados.filter(tour => {
     return tour.localidad.toLowerCase().includes(localidadBusqueda.value.toLowerCase());
   });
 });
