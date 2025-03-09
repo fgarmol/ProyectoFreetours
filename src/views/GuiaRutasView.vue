@@ -67,7 +67,7 @@ function calcularTotalAsistentes(ruta) {
 
 onMounted(() => {
 
-    if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
+    if (props.usuarioAutenticado.autenticado && (props.usuarioAutenticado.usuario.rol === 'admin') || (props.usuarioAutenticado.usuario.rol === 'guia')) {
     obtenerRutasAsignadas();
   } else {
     router.push('/');

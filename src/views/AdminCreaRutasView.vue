@@ -43,8 +43,31 @@ const newRuta = ref({
     guia_id: ''
 });
 
+const errors = ref({
+    titulo: '',
+    localidad: '',
+    descripcion: '',
+    foto: '',
+    fecha: '',
+    hora: '',
+    latitud: '',
+    longitud: '',
+    guia_id: ''
+});
+
 function clearForm() {
     newRuta.value = {
+        titulo: '',
+        localidad: '',
+        descripcion: '',
+        foto: '',
+        fecha: '',
+        hora: '',
+        latitud: '',
+        longitud: '',
+        guia_id: ''
+    };
+    errors.value = {
         titulo: '',
         localidad: '',
         descripcion: '',
@@ -71,7 +94,84 @@ function cargarGuia() {
         .catch(error => showAlert(`Error al cargar guías: ${error.message}`));
 }
 
+function validarFormulario() {
+    let isValid = true;
+    const today = new Date().toISOString().split('T')[0]; // Obtener la fecha de hoy en formato YYYY-MM-DD
+    const urlPattern = new RegExp('^(https?:\\/\\/)?'+ // protocolo
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // dominio
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // IP (v4) dirección
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // puerto y ruta
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // cadena de consulta
+        '(\\#[-a-z\\d_]*)?$','i'); // fragmento de anclaje
+
+    if (!newRuta.value.titulo) {
+        errors.value.titulo = 'El título es obligatorio';
+        isValid = false;
+    } else {
+        errors.value.titulo = '';
+    }
+    if (!newRuta.value.localidad) {
+        errors.value.localidad = 'La localidad es obligatoria';
+        isValid = false;
+    } else {
+        errors.value.localidad = '';
+    }
+    if (!newRuta.value.descripcion) {
+        errors.value.descripcion = 'La descripción es obligatoria';
+        isValid = false;
+    } else {
+        errors.value.descripcion = '';
+    }
+    if (!newRuta.value.foto) {
+        errors.value.foto = 'La foto es obligatoria';
+        isValid = false;
+    } else if (!urlPattern.test(newRuta.value.foto)) {
+        errors.value.foto = 'La foto debe ser una URL válida';
+        isValid = false;
+    } else {
+        errors.value.foto = '';
+    }
+    if (!newRuta.value.fecha) {
+        errors.value.fecha = 'La fecha es obligatoria';
+        isValid = false;
+    } else if (newRuta.value.fecha < today) {
+        errors.value.fecha = 'La fecha no puede ser anterior a hoy';
+        isValid = false;
+    } else {
+        errors.value.fecha = '';
+    }
+    if (!newRuta.value.hora) {
+        errors.value.hora = 'La hora es obligatoria';
+        isValid = false;
+    } else {
+        errors.value.hora = '';
+    }
+    if (!newRuta.value.latitud) {
+        errors.value.latitud = 'La latitud es obligatoria';
+        isValid = false;
+    } else {
+        errors.value.latitud = '';
+    }
+    if (!newRuta.value.longitud) {
+        errors.value.longitud = 'La longitud es obligatoria';
+        isValid = false;
+    } else {
+        errors.value.longitud = '';
+    }
+    if (!newRuta.value.guia_id) {
+        errors.value.guia_id = 'El guía es obligatorio';
+        isValid = false;
+    } else {
+        errors.value.guia_id = '';
+    }
+    return isValid;
+}
+
 function crearRuta() {
+    if (!validarFormulario()) {
+        showAlert('Por favor, corrige los errores en el formulario', false);
+        return;
+    }
     const data = {
         titulo: newRuta.value.titulo,
         localidad: newRuta.value.localidad,
@@ -107,8 +207,6 @@ function crearRuta() {
 }
 
 onMounted(() => {
-
-
     if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
         map = L.map('map').setView([40.4168, -3.7038], 13); 
 
@@ -129,10 +227,6 @@ onMounted(() => {
     } else {
         router.push('/');
     }
-
-
-
-
 });
 
 const searchLocation = async () => {
@@ -165,39 +259,47 @@ const searchLocation = async () => {
                 <div class="form-group col-md-6">
                     <label for="titulo">Título</label>
                     <input type="text" class="form-control" id="titulo" v-model="newRuta.titulo">
+                    <span class="text-danger">{{ errors.titulo }}</span>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="localidad">Localidad</label>
                     <input type="text" class="form-control" id="localidad" v-model="newRuta.localidad">
+                    <span class="text-danger">{{ errors.localidad }}</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
                 <textarea class="form-control" id="descripcion" rows="3" v-model="newRuta.descripcion"></textarea>
+                <span class="text-danger">{{ errors.descripcion }}</span>
             </div>
             <div class="form-group">
                 <label for="foto">Foto</label>
                 <input type="text" class="form-control" id="foto" placeholder="URL" v-model="newRuta.foto">
+                <span class="text-danger">{{ errors.foto }}</span>
             </div>
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="fecha">Fecha</label>
                     <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha"
                         @change="cargarGuia(newRuta.fecha)">
+                    <span class="text-danger">{{ errors.fecha }}</span>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="hora">Hora</label>
                     <input type="time" class="form-control" id="hora" v-model="newRuta.hora">
+                    <span class="text-danger">{{ errors.hora }}</span>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="latitud">Latitud</label>
                     <input type="text" class="form-control" id="latitud" v-model="newRuta.latitud">
+                    <span class="text-danger">{{ errors.latitud }}</span>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="longitud">Longitud</label>
                     <input type="text" class="form-control" id="longitud" v-model="newRuta.longitud">
+                    <span class="text-danger">{{ errors.longitud }}</span>
                 </div>
             </div>
             <div class="form-group">
@@ -206,6 +308,7 @@ const searchLocation = async () => {
                     <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}
                     </option>
                 </select>
+                <span class="text-danger">{{ errors.guia_id }}</span>
             </div>
             <button type="submit" class="btn btn-secondary">Crear</button>
 
