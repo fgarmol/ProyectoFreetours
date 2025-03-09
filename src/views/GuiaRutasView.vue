@@ -1,11 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import router from '@/router';
+
 
 const props = defineProps({
-    usuarioAutenticado: {
-        type: Object,
-        required: true
-    }
+  usuarioAutenticado: Object
 });
 
 const emits = defineEmits(['sesionIniciada']);
@@ -67,7 +66,14 @@ function calcularTotalAsistentes(ruta) {
 }
 
 onMounted(() => {
+
+    if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
     obtenerRutasAsignadas();
+  } else {
+    router.push('/');
+  }
+
+    
 });
 </script>
 

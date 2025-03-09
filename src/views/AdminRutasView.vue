@@ -1,16 +1,17 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import dayjs from 'dayjs'; // Asegúrate de tener dayjs instalado
+import router from '@/router';
+
 
 
 const props = defineProps({
-    usuarioAutenticado: {
-        type: Object,
-        required: true
-    }
+  usuarioAutenticado: Object
 });
 
 const emit = defineEmits(['sesionIniciada']);
+
+
 
 const rutas = ref([]);
 const activeTab = ref('pendientes');
@@ -153,7 +154,13 @@ function cancelarRuta(rutaId) {
 }
 
 onMounted(() => {
+
+    if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
     cargarRutas();
+  } else {
+    router.push('/');
+  }
+    
 
 });
 

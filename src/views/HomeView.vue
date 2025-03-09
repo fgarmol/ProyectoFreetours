@@ -209,7 +209,7 @@ function hideControls() {
                   <span class="ms-2 text-muted">({{ tour.asistentes }} asistentes)</span>
                 </div>
                 <p class="card-text">{{ tour.descripcion }}</p>
-                <p class="card-text"><small class="text-muted">Duración: {{ tour.hora }}</small></p>
+                <p class="card-text"><small class="text-muted">Hora: {{ tour.hora }}</small></p>
                 <p class="card-text"><small class="text-muted">Operador: {{ tour.guia_nombre }}</small></p>
                 <p class="card-text"><small class="text-muted">Fecha: {{ tour.fecha }}</small></p>
                 <router-link :to="'/rutas/' + tour.id" class="btn btn-secondary mt-auto">Reservar</router-link>
@@ -266,7 +266,7 @@ body {
 }
 
 .card:hover {
-  transform: scale(1.05); /* Efecto de zoom al pasar el ratón */
+  transform: scale(1.02); /* Efecto de zoom al pasar el ratón */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 

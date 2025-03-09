@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
 import router from '@/router';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -9,6 +9,10 @@ const guias = ref([]);
 const address = ref('');
 let map;
 let marker;
+
+const props = defineProps({
+  usuarioAutenticado: Object
+});
 
 function showAlert(message, isSuccess = false) {
     $.notify({
@@ -103,22 +107,32 @@ function crearRuta() {
 }
 
 onMounted(() => {
-    map = L.map('map').setView([40.4168, -3.7038], 13); // Madrid por defecto
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19,
-    }).addTo(map);
 
-    map.on('click', function (e) {
-        const { lat, lng } = e.latlng;
-        newRuta.value.latitud = lat;
-        newRuta.value.longitud = lng;
-        if (marker) marker.remove();
-        marker = L.marker([lat, lng]).addTo(map)
-            .bindPopup(`Lat: ${lat}, Lng: ${lng}`)
-            .openPopup();
-    });
+    if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
+        map = L.map('map').setView([40.4168, -3.7038], 13); 
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19,
+        }).addTo(map);
+
+        map.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+            newRuta.value.latitud = lat;
+            newRuta.value.longitud = lng;
+            if (marker) marker.remove();
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(`Lat: ${lat}, Lng: ${lng}`)
+                .openPopup();
+        });
+    } else {
+        router.push('/');
+    }
+
+
+
+
 });
 
 const searchLocation = async () => {
