@@ -1,25 +1,22 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import dayjs from 'dayjs'; // Asegúrate de tener dayjs instalado
+import dayjs from 'dayjs';
 import router from '@/router';
 
-
-
+// Props y eventos emitidos
 const props = defineProps({
     usuarioAutenticado: Object
 });
 
 const emit = defineEmits(['sesionIniciada']);
 
-
-
+// Variables reactivas
 const rutas = ref([]);
 const activeTab = ref('pendientes');
 const guiasDisponibles = ref({});
 const guiasDisponiblesModal = ref([]);
 const sortKey = ref('');
 const sortOrder = ref(1); // 1 for ascending, -1 for descending
-
 const showModal = ref(false);
 const paginaActual = ref(1);
 const totalPaginas = ref(1);
@@ -29,8 +26,7 @@ const todasLasValoraciones = ref([]);
 const mediasValoraciones = ref([]);
 const mediasCalculadas = ref([]);
 
-
-
+// Función para mostrar alertas
 function showAlert(message, isSuccess = false) {
     $.notify({
         message: message
@@ -48,6 +44,7 @@ function showAlert(message, isSuccess = false) {
     });
 }
 
+// Cargar guías disponibles para una fecha y ruta específica
 function cargarGuia(fecha, rutaId) {
     fetch(`http://localhost/APIFreetours/api.php/asignaciones?fecha=${fecha}`)
         .then(response => {
@@ -63,45 +60,35 @@ function cargarGuia(fecha, rutaId) {
         .catch(error => showAlert(`Error al cargar guías: ${error.message}`));
 }
 
+// Obtener valoraciones de rutas
 function obtenerValoraciones() {
     fetch(`http://localhost/APIFreetours/api.php/valoraciones`)
-        .then(response => {
-            // Intentar procesar la respuesta incluso si hay un error
-            return response.json().catch(() => {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            });
-        })
+        .then(response => response.json())
         .then(data => {
-            try {
-                todasLasValoraciones.value = data;
-                /* console.log('Valoraciones cargadas:', todasLasValoraciones.value); */
-                mediasValoraciones.value = calcularMedia(); // Llamar a calcularMedia después de obtener las valoraciones
-                /* console.log('Medias calculadas:', mediasValoraciones.value); */
-            } catch (error) {
-                showAlert(`Error al procesar valoraciones: ${error.message}`);
-            }
+            todasLasValoraciones.value = data;
+            mediasValoraciones.value = calcularMedia();
         })
         .catch(error => showAlert(`Error al obtener valoraciones: ${error.message}`));
 }
 
+// Cargar rutas
 function cargarRutas() {
     fetch("http://localhost/APIFreetours/api.php/rutas")
         .then(response => {
             if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
             return response.json();
         })
-        .then(async data => {
+        .then(data => {
             rutas.value = data;
-            // Para cada ruta, cargar sus guías disponibles según la fecha
             rutas.value.forEach(ruta => {
                 cargarGuia(ruta.fecha, ruta.id);
             });
-/*             console.log('Rutas cargadas:', rutas.value);
- */            obtenerValoraciones();
+            obtenerValoraciones();
         })
         .catch(error => showAlert(`Error al obtener rutas: ${error.message}`));
 }
 
+// Asignar guía a una ruta
 function asignarGuia(ruta) {
     const data = {
         guia_id: ruta.guia_id,
@@ -126,6 +113,7 @@ function asignarGuia(ruta) {
         .catch(error => showAlert(`Error al asignar guía: ${error.message}`));
 }
 
+// Obtener guías disponibles para una ruta
 function obtenerGuias(ruta) {
     const disponibles = guiasDisponibles.value[ruta.id] || [];
     if (ruta.guia_id) {
@@ -137,6 +125,7 @@ function obtenerGuias(ruta) {
     return disponibles;
 }
 
+// Cancelar una ruta
 function cancelarRuta(rutaId) {
     if (!confirm('¿Estás seguro de que deseas cancelar esta ruta?')) return;
     fetch(`http://localhost/APIFreetours/api.php/rutas?id=${rutaId}`, {
@@ -153,25 +142,26 @@ function cancelarRuta(rutaId) {
         .catch(error => showAlert(`Error al cancelar ruta: ${error.message}`));
 }
 
+// Obtener rutas al montar el componente
 onMounted(() => {
-
     if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
         cargarRutas();
     } else {
         router.push('/');
     }
-
-
 });
 
+// Computed para rutas pendientes
 const rutasPendientes = computed(() => {
     return rutas.value.filter(ruta => dayjs(ruta.fecha).isAfter(dayjs()));
 });
 
+// Computed para rutas pasadas
 const rutasPasadas = computed(() => {
     return rutas.value.filter(ruta => dayjs(ruta.fecha).isBefore(dayjs()));
 });
 
+// Ordenar rutas por clave
 function sortBy(key) {
     if (sortKey.value === key) {
         sortOrder.value = -sortOrder.value;
@@ -183,7 +173,6 @@ function sortBy(key) {
         let aValue = a[key];
         let bValue = b[key];
 
-        // Convertir a números si la clave es 'id'
         if (key === 'id') {
             aValue = Number(aValue);
             bValue = Number(bValue);
@@ -197,54 +186,33 @@ function sortBy(key) {
     });
 }
 
+// Calcular media de valoraciones
 function calcularMedia() {
     const medias = [];
-
-    // Recorremos todas las valoraciones
     todasLasValoraciones.value.forEach(valoracion => {
         const rutaId = valoracion.ruta_id;
-
-        // Verificamos si ya hemos calculado la media para esta ruta
         if (!medias.some(media => media.ruta_id === rutaId)) {
-            // Filtramos las valoraciones para la ruta actual
             const valoracionesRuta = todasLasValoraciones.value.filter(v => v.ruta_id === rutaId);
-            /* console.log(`Valoraciones para ruta ${rutaId}:`, valoracionesRuta); */
-
             if (valoracionesRuta.length > 0) {
-                // Sumamos las puntuaciones
                 const sumaValoraciones = valoracionesRuta.reduce((acc, v) => acc + v.puntuacion, 0);
-                // Calculamos la media
                 const media = sumaValoraciones / valoracionesRuta.length;
-
-                // Guardamos la media calculada
                 medias.push({ ruta_id: rutaId, media });
             }
         }
     });
-
-    console.log('Medias calculadas:', medias);
-
-    // Guardamos las medias en el estado global
     mediasCalculadas.value = medias;
     return medias;
 }
 
+// Obtener media de valoraciones para una ruta
 function obtenerMedia(idruta) {
-    // Convertir el id a número para asegurar la comparación
     const id = Number(idruta);
-    /* console.log('Medias almacenadas en mediasCalculadas:', mediasCalculadas.value); */
     const media = mediasCalculadas.value.find(item => item.ruta_id === id);
-    if (!media) {
-        /* console.log(`No se encontró media para la ruta ${idruta}`); */
-    }
     return media ? media.media : null;
 }
 
-
-
-
+// Duplicar una ruta
 function duplicarRuta() {
-
     const nuevaRuta = {
         titulo: selectedRuta.value.titulo,
         localidad: selectedRuta.value.localidad,
@@ -277,6 +245,7 @@ function duplicarRuta() {
     closeModal();
 }
 
+// Paginación
 function paginaAnterior() {
     if (paginaActual.value > 1) {
         paginaActual.value--;
@@ -291,6 +260,7 @@ function paginaSiguiente() {
     }
 }
 
+// Abrir y cerrar modal
 function openModal(ruta) {
     selectedRuta.value = ruta;
     nuevaFecha.value = '';
@@ -301,7 +271,6 @@ function openModal(ruta) {
 function closeModal() {
     showModal.value = false;
 }
-
 </script>
 
 <template>
@@ -309,7 +278,8 @@ function closeModal() {
         <h1>Administrar rutas</h1>
 
         <div class="mb-3">
-            <router-link to="/admin/rutas/crearRuta" class="btn btn-secondary">Crear ruta</router-link>
+            <router-link to="/admin/rutas/crearRuta" class="btn btn-secondary" aria-label="Crear nueva ruta">Crear
+                ruta</router-link>
         </div>
 
         <div class="counters d-flex justify-content-end mb-3">
@@ -318,12 +288,12 @@ function closeModal() {
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'pendientes' }"
-                    @click="activeTab = 'pendientes'">Rutas Pendientes</a>
+                <a class="nav-link" :class="{ active: activeTab === 'pendientes' }" @click="activeTab = 'pendientes'"
+                    aria-selected="activeTab === 'pendientes'">Rutas Pendientes</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'">Rutas
-                    Pasadas</a>
+                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'"
+                    aria-selected="activeTab === 'pasadas'">Rutas Pasadas</a>
             </li>
         </ul>
 
@@ -360,7 +330,8 @@ function closeModal() {
                                 <td>{{ ruta.latitud }}</td>
                                 <td>{{ ruta.longitud }}</td>
                                 <td>
-                                    <select v-model="ruta.guia_id" @change="asignarGuia(ruta)" class="form-select">
+                                    <select v-model="ruta.guia_id" @change="asignarGuia(ruta)" class="form-select"
+                                        aria-label="Seleccionar guía para {{ ruta.titulo }}">
                                         <option disabled>Seleccionar guía</option>
                                         <option v-for="guia in obtenerGuias(ruta)" :key="guia.id" :value="guia.id">
                                             {{ guia.nombre }}
@@ -368,9 +339,10 @@ function closeModal() {
                                     </select>
                                 </td>
                                 <td>
-                                    <button @click="cancelarRuta(ruta.id)"
-                                        class="btn btn-danger btn-sm">Eliminar</button>
-                                    <button @click="openModal(ruta)" class="btn btn-secondary btn-sm">Duplicar</button>
+                                    <button @click="cancelarRuta(ruta.id)" class="btn btn-danger btn-sm"
+                                        aria-label="Eliminar ruta {{ ruta.titulo }}">Eliminar</button>
+                                    <button @click="openModal(ruta)" class="btn btn-secondary btn-sm"
+                                        aria-label="Duplicar ruta {{ ruta.titulo }}">Duplicar</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -413,7 +385,8 @@ function closeModal() {
                                     </span>
                                 </td>
                                 <td>
-                                    <select v-model="ruta.guia_id" @change="asignarGuia(ruta)" class="form-control">
+                                    <select v-model="ruta.guia_id" @change="asignarGuia(ruta)" class="form-control"
+                                        aria-label="Seleccionar guía para {{ ruta.titulo }}">
                                         <option disabled>Seleccionar guía</option>
                                         <option v-for="guia in obtenerGuias(ruta)" :key="guia.id" :value="guia.id">
                                             {{ guia.nombre }}
@@ -421,10 +394,10 @@ function closeModal() {
                                     </select>
                                 </td>
                                 <td>
-                                    <button @click="cancelarRuta(ruta.id)"
-                                        class="btn btn-danger btn-sm me-2 mb-2">Eliminar</button>
-                                    <button @click="openModal(ruta)"
-                                        class="btn btn-secondary btn-sm mb-2">Duplicar</button>
+                                    <button @click="cancelarRuta(ruta.id)" class="btn btn-danger btn-sm me-2 mb-2"
+                                        aria-label="Eliminar ruta {{ ruta.titulo }}">Eliminar</button>
+                                    <button @click="openModal(ruta)" class="btn btn-secondary btn-sm mb-2"
+                                        aria-label="Duplicar ruta {{ ruta.titulo }}">Duplicar</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -434,11 +407,11 @@ function closeModal() {
         </div>
 
         <div class="pagination d-flex justify-content-center mt-3">
-            <button @click="paginaAnterior" :disabled="paginaActual === 1"
-                class="btn btn-secondary me-2">Anterior</button>
+            <button @click="paginaAnterior" :disabled="paginaActual === 1" class="btn btn-secondary me-2"
+                aria-label="Página anterior">Anterior</button>
             <span class="align-self-center">Página {{ paginaActual }} de {{ totalPaginas }}</span>
-            <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas"
-                class="btn btn-secondary ms-2">Siguiente</button>
+            <button @click="paginaSiguiente" :disabled="paginaActual === totalPaginas" class="btn btn-secondary ms-2"
+                aria-label="Página siguiente">Siguiente</button>
         </div>
     </div>
 
@@ -447,7 +420,7 @@ function closeModal() {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Duplicar Ruta</h5>
-                    <button type="button" class="close" @click="closeModal" aria-label="Close">
+                    <button type="button" class="close" @click="closeModal" aria-label="Cerrar">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -455,19 +428,23 @@ function closeModal() {
                     <div class="form-group">
                         <label for="nuevaFecha">Nueva Fecha</label>
                         <input type="date" id="nuevaFecha" v-model="nuevaFecha" class="form-control"
-                            @change="cargarGuia(nuevaFecha, selectedRuta.id)">
+                            @change="cargarGuia(nuevaFecha, selectedRuta.id)"
+                            aria-label="Nueva fecha para duplicar ruta">
                     </div>
                     <div class="form-group">
                         <label for="guia">Guía</label>
-                        <select class="form-control" id="guia" v-model="selectedRuta.guia_id">
+                        <select class="form-control" id="guia" v-model="selectedRuta.guia_id"
+                            aria-label="Seleccionar guía para duplicar ruta">
                             <option v-for="guia in guiasDisponiblesModal" :key="guia.id" :value="guia.id">{{ guia.nombre
                                 }}</option>
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
-                    <button type="button" class="btn btn-secondary" @click="duplicarRuta">Duplicar Ruta</button>
+                    <button type="button" class="btn btn-secondary" @click="closeModal"
+                        aria-label="Cerrar modal de duplicar ruta">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" @click="duplicarRuta"
+                        aria-label="Duplicar ruta">Duplicar Ruta</button>
                 </div>
             </div>
         </div>

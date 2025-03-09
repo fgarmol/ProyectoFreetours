@@ -2,6 +2,7 @@
 import router from '@/router';
 import { ref, watch } from 'vue';
 
+// Formulario reactivo y errores
 const form = ref({ nombre: '', mail: '', password: '', confirmPassword: '' });
 const errors = ref({ nombre: '', mail: '', password: '', confirmPassword: '' });
 const touched = ref({ nombre: false, mail: false, password: false, confirmPassword: false });
@@ -24,6 +25,7 @@ function showAlert(message, isSuccess = false) {
     });
 }
 
+// Validaciones de campos
 function validateNombre() {
   if (form.value.nombre.length < 3) {
     errors.value.nombre = 'El nombre debe tener al menos 3 caracteres';
@@ -58,6 +60,7 @@ function validateConfirmPassword() {
   }
 }
 
+// Observador para validar campos en tiempo real
 watch(form.value, (newVal, oldVal) => {
   if (touched.value.nombre) validateNombre();
   if (touched.value.mail) validateMail();
@@ -65,6 +68,7 @@ watch(form.value, (newVal, oldVal) => {
   if (touched.value.confirmPassword) validateConfirmPassword();
 }, { deep: true });
 
+// Validar todo el formulario
 function validateForm() {
   validateNombre();
   validateMail();
@@ -74,6 +78,7 @@ function validateForm() {
   return !errors.value.nombre && !errors.value.mail && !errors.value.password && !errors.value.confirmPassword;
 }
 
+// Función para registrar usuario
 function RegistrarUsuario() {
   if (!validateForm()) {
     return;
@@ -119,32 +124,31 @@ function RegistrarUsuario() {
 
 </script>
 <template>
-  <form @submit.prevent="RegistrarUsuario()" class="m-3">
+  <form @submit.prevent="RegistrarUsuario()" class="m-3" aria-labelledby="register-form">
     <div class="form-group">
 
       <label for="nombre">Nombre</label>
-      <input v-model="form.nombre" @focus="touched.nombre = true" @blur="validateNombre" type="text" class="form-control" placeholder="Nombre" required />
+      <input v-model="form.nombre" @focus="touched.nombre = true" @blur="validateNombre" type="text" class="form-control" placeholder="Nombre" required aria-required="true" aria-label="Nombre" />
       <span class="text-danger" v-if="touched.nombre">{{ errors.nombre }}</span>
 
       <label for="mail">Mail</label>
-      <input v-model="form.mail" @focus="touched.mail = true" @blur="validateMail" type="email" class="form-control" placeholder="Mail" required />
+      <input v-model="form.mail" @focus="touched.mail = true" @blur="validateMail" type="email" class="form-control" placeholder="Mail" required aria-required="true" aria-label="Mail" />
       <span class="text-danger" v-if="touched.mail">{{ errors.mail }}</span>
 
       <label for="password">Contraseña</label>
-      <input v-model="form.password" @focus="touched.password = true" @blur="validatePassword" type="password" class="form-control" placeholder="Contraseña" required />
+      <input v-model="form.password" @focus="touched.password = true" @blur="validatePassword" type="password" class="form-control" placeholder="Contraseña" required aria-required="true" aria-label="Contraseña" />
       <span class="text-danger" v-if="touched.password">{{ errors.password }}</span>
 
       <label for="confirmPassword">Confirmar Contraseña</label>
-      <input v-model="form.confirmPassword" @focus="touched.confirmPassword = true" @blur="validateConfirmPassword" type="password" class="form-control" placeholder="Confirmar Contraseña" required />
+      <input v-model="form.confirmPassword" @focus="touched.confirmPassword = true" @blur="validateConfirmPassword" type="password" class="form-control" placeholder="Confirmar Contraseña" required aria-required="true" aria-label="Confirmar Contraseña" />
       <span class="text-danger" v-if="touched.confirmPassword">{{ errors.confirmPassword }}</span>
 
-      <button type="submit" class="btn btn-secondary mt-3">Registrarse</button>
+      <button type="submit" class="btn btn-secondary mt-3" aria-label="Registrarse">Registrarse</button>
     </div>
   </form>
 </template>
 <style scoped>
 @import '@/assets/styles/main.css';
-
 
 .text-danger {
     color: red;

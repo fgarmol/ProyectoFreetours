@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
+// Props y eventos emitidos
 const props = defineProps({
   title: String,
   usuarioAutenticado: {
@@ -11,13 +12,15 @@ const props = defineProps({
 
 const emits = defineEmits(['sesionIniciada']);
 
+// Variables reactivas
 const tours = ref([]);
 const paginaActual = ref(1);
 const itemsPorPagina = 15;
-const opcionOrden = ref('default'); // Por defecto a 'random'
+const opcionOrden = ref('default'); // Orden por defecto
 const localidadBusqueda = ref('');
 const fechaBusqueda = ref('');
 
+// Función para cargar rutas desde la API
 function cargarRutas() {
   let url = 'http://localhost/APIFreetours/api.php/rutas';
 
@@ -32,14 +35,16 @@ function cargarRutas() {
     .catch(error => console.error('Error:', error));
 }
 
+// Función para obtener la fecha actual en formato YYYY-MM-DD
 function obtenerFechaActual() {
   const hoy = new Date();
   const dia = String(hoy.getDate()).padStart(2, '0');
-  const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
   const año = hoy.getFullYear();
   return `${año}-${mes}-${dia}`;
 }
 
+// Computed para filtrar tours según la fecha y búsqueda
 const toursFiltrados = computed(() => {
   const fechaActual = obtenerFechaActual();
   let filtrados = tours.value.filter(tour => tour.fecha >= fechaActual);
@@ -61,6 +66,7 @@ const toursFiltrados = computed(() => {
   });
 });
 
+// Computed para ordenar tours según la opción seleccionada
 const toursOrdenados = computed(() => {
   let ordenados = [...toursFiltrados.value];
   if (opcionOrden.value === 'alphabetical') {
@@ -75,16 +81,19 @@ const toursOrdenados = computed(() => {
   return ordenados;
 });
 
+// Computed para paginar tours
 const toursPaginados = computed(() => {
   const inicio = (paginaActual.value - 1) * itemsPorPagina;
   const fin = inicio + itemsPorPagina;
   return toursOrdenados.value.slice(inicio, fin);
 });
 
+// Computed para calcular el total de páginas
 const totalPaginas = computed(() => {
   return Math.ceil(toursOrdenados.value.length / itemsPorPagina);
 });
 
+// Funciones para cambiar de página
 function paginaSiguiente() {
   if (paginaActual.value < totalPaginas.value) {
     paginaActual.value++;
@@ -97,17 +106,19 @@ function paginaAnterior() {
   }
 }
 
+// Cargar rutas al montar el componente
 onMounted(() => {
   cargarRutas();
 });
 
+// Variables y funciones para controlar el video
 const isPlaying = ref(false);
 const progress = ref(0);
 const video = ref(null);
 const controlsVisible = ref(false);
 
 function togglePlay(event) {
-  event.stopPropagation(); // Detener la propagación del evento de clic
+  event.stopPropagation();
   if (video.value.paused) {
     video.value.play();
     isPlaying.value = true;
@@ -147,59 +158,59 @@ function hideControls() {
       <div class="carousel-inner">
         <div class="carousel-item active">
           <div class="video-container" @mouseover="showControls" @mouseleave="hideControls">
-            <video ref="video" class="d-block w-100 carousel-video" @timeupdate="updateProgress" autoplay muted>
+            <video ref="video" class="d-block w-100 carousel-video" @timeupdate="updateProgress" autoplay muted aria-label="Video de presentación">
               <source src="@/assets/img/video.mp4" type="video/mp4">
-              Your browser does not support the video tag.
+              Tu navegador no soporta el elemento de video.
             </video>
             <div class="video-controls" :class="{ 'hidden': !controlsVisible }">
-              <button @click="togglePlay($event)">{{ isPlaying ? 'Pause' : 'Play' }}</button>
-              <input type="range" min="0" max="100" v-model="progress" @input="seek">
+              <button @click="togglePlay($event)" aria-label="Reproducir/Pausar">{{ isPlaying ? 'Pause' : 'Play' }}</button>
+              <input type="range" min="0" max="100" v-model="progress" @input="seek" aria-label="Barra de progreso">
             </div>
           </div>
         </div>
         <div class="carousel-item">
-          <img src="https://picsum.photos/1200/300?random=1" class="d-block w-100" alt="...">
+          <img src="https://picsum.photos/1200/300?random=1" class="d-block w-100" alt="Imagen aleatoria 1">
         </div>
         <div class="carousel-item">
-          <img src="https://picsum.photos/1200/300?random=2" class="d-block w-100" alt="...">
+          <img src="https://picsum.photos/1200/300?random=2" class="d-block w-100" alt="Imagen aleatoria 2">
         </div>
         <div class="carousel-item">
-          <img src="https://picsum.photos/1200/300?random=3" class="d-block w-100" alt="...">
+          <img src="https://picsum.photos/1200/300?random=3" class="d-block w-100" alt="Imagen aleatoria 3">
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev" aria-label="Anterior">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
+        <span class="visually-hidden">Anterior</span>
       </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next" aria-label="Siguiente">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
+        <span class="visually-hidden">Siguiente</span>
       </button>
     </div>
   </header>
   <div class="container">
     <div class="row">
-      <!-- Filtros de búsqueda (Sidebar Filters) -->
+      <!-- Filtros de búsqueda -->
       <aside class="col-md-3 mb-4">
         <div class="card">
           <div class="card-body-search">
             <div class="mb-3">
-              <input type="text" class="form-control" placeholder="Buscar destino" v-model="localidadBusqueda">
+              <input type="text" class="form-control" placeholder="Buscar destino" v-model="localidadBusqueda" aria-label="Buscar destino">
             </div>
             <div class="mb-3">
               <label for="date" class="form-label">Fecha</label>
-              <input type="date" id="date" class="form-control" v-model="fechaBusqueda">
+              <input type="date" id="date" class="form-control" v-model="fechaBusqueda" aria-label="Buscar por fecha">
             </div>
           </div>
         </div>
       </aside>
 
-      <!-- Listado de Tours (Tour List) -->
+      <!-- Listado de Tours -->
       <section class="col-md-9">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div>
             <label for="sort" class="form-label">Ordenar por:</label>
-            <select id="sort" class="form-select" v-model="opcionOrden">
+            <select id="sort" class="form-select" v-model="opcionOrden" aria-label="Ordenar por">
               <option value="default">Mejores</option>
               <option value="alphabetical">Alfabético</option>
               <option value="attendees">Cantidad de Asistentes</option>
@@ -211,29 +222,26 @@ function hideControls() {
         <div class="row">
           <div class="col-12 mb-4" v-for="tour in toursPaginados" :key="tour.id">
             <div class="card h-100 flex-md-row shadow-sm">
-              <img :src="tour.foto" :alt="tour.titulo" class="card-img-top w-100 w-md-50">
+              <img :src="tour.foto" :alt="tour.titulo" class="card-img-top w-100 w-md-50" :aria-label="`Imagen de ${tour.titulo}`">
               <div class="card-body d-flex flex-column justify-content-center">
                 <h5 class="card-title">{{ tour.titulo }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ tour.localidad }}</h6>
                 <div class="d-flex align-items-center mb-2">
-                  <!-- <span class="text-warning">⭐⭐⭐⭐⭐</span> -->
                   <span class="ms-2 text-muted">({{ tour.asistentes }} asistentes)</span>
                 </div>
                 <p class="card-text">{{ tour.descripcion }}</p>
                 <p class="card-text"><small class="text-muted">Hora: {{ tour.hora }}</small></p>
                 <p class="card-text"><small class="text-muted">Operador: {{ tour.guia_nombre }}</small></p>
                 <p class="card-text"><small class="text-muted">Fecha: {{ tour.fecha }}</small></p>
-                <router-link :to="'/rutas/' + tour.id" class="btn btn-secondary mt-auto">Reservar</router-link>
+                <router-link :to="'/rutas/' + tour.id" class="btn btn-secondary mt-auto" aria-label="Reservar ruta {{ tour.titulo }}">Reservar</router-link>
               </div>
             </div>
           </div>
         </div>
         <div class="pagination d-flex justify-content-center mt-3">
-          <button @click="paginaAnterior" class="btn btn-secondary me-2"
-            :disabled="paginaActual === 1">Anterior</button>
+          <button @click="paginaAnterior" class="btn btn-secondary me-2" :disabled="paginaActual === 1" aria-label="Página anterior">Anterior</button>
           <span class="align-self-center">Página {{ paginaActual }} de {{ totalPaginas }}</span>
-          <button @click="paginaSiguiente" class="btn btn-secondary ms-2"
-            :disabled="paginaActual === totalPaginas">Siguiente</button>
+          <button @click="paginaSiguiente" class="btn btn-secondary ms-2" :disabled="paginaActual === totalPaginas" aria-label="Página siguiente">Siguiente</button>
         </div>
       </section>
     </div>
@@ -243,34 +251,32 @@ function hideControls() {
 <style scoped>
 @import '@/assets/styles/main.css';
 
-
-
-
-
+/* Estilos del carrusel */
 .carousel-indicators button {
-  background-color: black; /* Fondo negro */
+  background-color: black;
 }
 
 .carousel-indicators button:hover {
-  background-color: white; /* Fondo blanco al pasar el ratón */
+  background-color: white;
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  filter: invert(1); /* Iconos blancos */
+  filter: invert(1);
 }
 
 .carousel-control-prev-icon:hover,
 .carousel-control-next-icon:hover {
-  filter: invert(0.5); /* Iconos grises al pasar el ratón */
+  filter: invert(0.5);
 }
 
 .carousel-video, .carousel-item img {
   width: 100%;
-  height: 300px; /* Ajusta esta altura para que coincida con la altura de las imágenes */
+  height: 300px;
   object-fit: cover;
 }
 
+/* Contenedor y controles del video */
 .video-container {
   position: relative;
   display: flex;
@@ -288,7 +294,7 @@ function hideControls() {
   background: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 5px;
-  z-index: 10; /* Asegura que los controles estén por encima de otros elementos */
+  z-index: 10;
   transition: opacity 0.3s;
 }
 
@@ -309,6 +315,7 @@ function hideControls() {
   margin: 0 10px;
 }
 
+/* Estilos del buscador */
 .card-body-search {
   padding: 1rem;
 }
@@ -329,7 +336,7 @@ function hideControls() {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 50%; /* Asegura que el cuerpo de la tarjeta tenga el mismo ancho */
+    width: 50%;
   }
 
   .card-body-search {

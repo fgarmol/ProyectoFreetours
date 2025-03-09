@@ -7,6 +7,7 @@ import 'bootstrap-notify';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// Props y eventos emitidos
 const props = defineProps({
     usuarioAutenticado: {
         type: Object,
@@ -16,6 +17,13 @@ const props = defineProps({
 
 const emit = defineEmits(['sesionIniciada']);
 
+// Variables reactivas
+const ruta = ref(null);
+const asistentes = ref(1);
+const route = useRoute();
+const rutaId = route.params.id;
+
+// Función para mostrar alertas
 function showAlert(message, isSuccess = false) {
     $.notify({
         message: message
@@ -33,40 +41,34 @@ function showAlert(message, isSuccess = false) {
     });
 }
 
-const ruta = ref(null);
-const asistentes = ref(1);
-const route = useRoute();
-const rutaId = route.params.id;
-
+// Función para obtener la ruta
 function obtenerRuta() {
     fetch(`http://localhost/APIFreetours/api.php/rutas/?id=${rutaId}`)
         .then(response => response.json())
         .then(data => {
-            console.log('Ruta:', data);
             ruta.value = data;
-            // Utiliza nextTick para asegurarse de que el DOM se haya actualizado antes de inicializar el mapa con las coordenadas proporcionadas
             nextTick(() => {
                 initMap(data.latitud, data.longitud); // Inicializa el mapa con las coordenadas
             });
         })
         .catch(error => {
-            console.error('Error:', error);
             showAlert('Error al obtener la ruta', false);
         });
 }
 
+// Obtener ruta al montar el componente
 onMounted(() => {
     obtenerRuta();
 });
 
+// Función para reservar una ruta
 function reservar() {
-    console.log('Reservar function called');
     const data = {
         ruta_id: rutaId,
         num_personas: asistentes.value,
         email: props.usuarioAutenticado.usuario.email
     };
-    console.log('Data:', data);
+
     fetch("http://localhost/APIFreetours/api.php/reservas", {
         method: 'POST',
         headers: {
@@ -76,17 +78,13 @@ function reservar() {
     })
         .then(response => {
             if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-            console.log('Response:', response);
             return response.json();
         })
         .then(data => {
             if (data.status === 'success') {
                 showAlert('Reserva realizada exitosamente', true);
                 obtenerRuta();
-
-                // Redirige a la página principal con un timeout de 2 segundos
-                setTimeout(() => router.push('/'), 2000);
-                
+                setTimeout(() => router.push('/'), 2000); // Redirige a la página principal
             } else {
                 showAlert(data.message, false);
             }
@@ -96,11 +94,13 @@ function reservar() {
         });
 }
 
+// Función para formatear la fecha
 function formatDate(dateString) {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     return new Date(dateString).toLocaleDateString('es-ES', options);
 }
 
+// Función para inicializar el mapa
 function initMap(lat, lng) {
     const map = L.map('map').setView([lat, lng], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -127,27 +127,26 @@ function initMap(lat, lng) {
             </div>
             <!-- imagen de la ruta -->
             <div class="col-md-4 foto">
-                <img :src="ruta.foto" alt="Foto de la ruta" class="img-fluid mb-3 w-100" />
+                <img :src="ruta.foto" alt="Foto de la ruta {{ ruta.titulo }}" class="img-fluid mb-3 w-100" />
             </div>
         </div>
 
-        <div id="map" class="full-width" style="height: 400px;"></div> <!-- Contenedor del mapa -->
+        <div id="map" class="full-width" style="height: 400px;" aria-label="Mapa de la ruta"></div> <!-- Contenedor del mapa -->
 
         <div v-if="props.usuarioAutenticado.autenticado">
-            <form @submit.prevent="reservar" class="form">
+            <form @submit.prevent="reservar" class="form" aria-labelledby="form-reservar">
                 <div class="form-group mt-3">
                     <label for="email">Email:&nbsp</label>
-                    <input type="email" v-model="props.usuarioAutenticado.usuario.email" class="form-control"
-                        disabled />
+                    <input type="email" v-model="props.usuarioAutenticado.usuario.email" class="form-control" disabled aria-label="Email" />
                 </div>
                 <div class="form-group mt-3">
                     <label for="asistentes">Cantidad de asistentes:&nbsp</label>
-                    <input type="number" id="asistentes" v-model="asistentes" class="form-control" min="1" />
+                    <input type="number" id="asistentes" v-model="asistentes" class="form-control" min="1" aria-label="Cantidad de asistentes" />
                 </div>
-                <button type="submit" class="btn btn-primary">Reservar</button>
+                <button type="submit" class="btn btn-primary" aria-label="Reservar ruta">Reservar</button>
             </form>
         </div>
-        <div v-else class="alert alert-danger mt-3">
+        <div v-else class="alert alert-danger mt-3" aria-live="polite">
             <p class="alert">Debes iniciar sesión para reservar una ruta</p>
         </div>
     </div>
@@ -156,7 +155,9 @@ function initMap(lat, lng) {
 <style scoped>
 @import '@/assets/styles/main.css';
 
-
+h1{
+    text-align: start;
+}
 .foto {
     height: 100%;
     overflow: hidden;

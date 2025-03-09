@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-notify';
 
+// Props y eventos emitidos
 const props = defineProps({
     usuarioAutenticado: {
         type: Object,
@@ -14,6 +15,7 @@ const props = defineProps({
 
 const emits = defineEmits(['sesionIniciada']);
 
+// Variables reactivas
 const reservas = ref([]);
 const reservasPasadas = ref([]);
 const reservasFuturas = ref([]);
@@ -25,8 +27,9 @@ const showEditModal = ref(false);
 const selectedReserva = ref(null);
 const estrellas = ref(0);
 const comentario = ref('');
-const numPersonas = ref(0); 
+const numPersonas = ref(0);
 
+// Función para mostrar alertas
 function showAlert(message, isSuccess = false) {
     $.notify({
         message: message
@@ -44,11 +47,13 @@ function showAlert(message, isSuccess = false) {
     });
 }
 
+// Función para abrir el modal de valoración
 function openModal(reserva) {
     selectedReserva.value = reserva;
     showModal.value = true;
 }
 
+// Función para cerrar el modal de valoración
 function closeModal() {
     showModal.value = false;
     selectedReserva.value = null;
@@ -56,18 +61,21 @@ function closeModal() {
     comentario.value = '';
 }
 
+// Función para abrir el modal de edición
 function openEditModal(reserva) {
     selectedReserva.value = reserva;
     numPersonas.value = reserva.num_personas;
     showEditModal.value = true;
 }
 
+// Función para cerrar el modal de edición
 function closeEditModal() {
     showEditModal.value = false;
     selectedReserva.value = null;
     numPersonas.value = 0;
 }
 
+// Función para enviar la edición de la reserva
 function submitEditReserva() {
     if (selectedReserva.value) {
         modificarReserva(selectedReserva.value.reserva_id, numPersonas.value);
@@ -75,6 +83,7 @@ function submitEditReserva() {
     }
 }
 
+// Función para enviar la valoración
 function submitValoracion() {
     if (selectedReserva.value) {
         valorarRuta(selectedReserva.value.ruta_id, estrellas.value, comentario.value);
@@ -82,6 +91,7 @@ function submitValoracion() {
     }
 }
 
+// Función para obtener las reservas del usuario
 function obtenerReservas() {
     const userEmail = props.usuarioAutenticado.usuario.email;
     console.log('Email:', userEmail);
@@ -107,10 +117,12 @@ function obtenerReservas() {
         .catch(error => console.error('Error:', error));
 }
 
+// Obtener reservas al montar el componente
 onMounted(() => {
     obtenerReservas();
 });
 
+// Función para valorar una ruta
 function valorarRuta(rutaId, estrellas, comentario) {
     const nuevaValoracion = {
         user_id: props.usuarioAutenticado.usuario.id,
@@ -142,6 +154,7 @@ function valorarRuta(rutaId, estrellas, comentario) {
         });
 }
 
+// Función para modificar una reserva
 function modificarReserva(reservaId, numPersonas) {
     const data = {
         num_personas: numPersonas
@@ -169,6 +182,7 @@ function modificarReserva(reservaId, numPersonas) {
         });
 }
 
+// Función para cancelar una reserva
 function cancelarReserva(reservaId) {
     if (!confirm('¿Estás seguro de que deseas cancelar esta reserva?')) return;
 
@@ -194,48 +208,47 @@ function cancelarReserva(reservaId) {
 
 <template>
     <div class="container">
-        
         <h1>Mis Reservas</h1>
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'futuras' }" @click="activeTab = 'futuras'">Próximas Reservas</a>
+                <a class="nav-link" :class="{ active: activeTab === 'futuras' }" @click="activeTab = 'futuras'" role="tab" aria-selected="activeTab === 'futuras'">Próximas Reservas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'">Reservas Pasadas</a>
+                <a class="nav-link" :class="{ active: activeTab === 'pasadas' }" @click="activeTab = 'pasadas'" role="tab" aria-selected="activeTab === 'pasadas'">Reservas Pasadas</a>
             </li>
         </ul>
         <div class="tab-content">
-            <div v-if="activeTab === 'futuras'" class="tab-pane active">
+            <div v-if="activeTab === 'futuras'" class="tab-pane active" role="tabpanel">
                 <div class="row">
                     <div class="card-deck">
                         <div class="card" v-for="reserva in reservasFuturas" :key="reserva.reserva_id">
-                            <img :src="reserva.ruta_foto" class="card-img-top" alt="Imagen de la ruta">
+                            <img :src="reserva.ruta_foto" class="card-img-top" :alt="`Imagen de la ruta ${reserva.ruta_titulo}`">
                             <div class="card-body">
                                 <h5 class="card-title">{{ reserva.ruta_titulo }}</h5>
                                 <p class="card-text"><strong>Fecha:</strong> {{ reserva.ruta_fecha }}</p>
                                 <p class="card-text"><strong>Hora:</strong> {{ reserva.ruta_hora }}</p>
                                 <p class="card-text"><strong>Localidad:</strong> {{ reserva.ruta_localidad }}</p>
                                 <p class="card-text"><strong>Descripción:</strong> {{ reserva.ruta_descripcion }}</p>
-                                <button @click="openEditModal(reserva)" class="btn btn-secondary">Editar Reserva</button>
-                                <button @click="cancelarReserva(reserva.reserva_id)" class="btn btn-danger">Cancelar Reserva</button>
+                                <button @click="openEditModal(reserva)" class="btn btn-secondary" aria-label="Editar reserva de {{ reserva.ruta_titulo }}">Editar Reserva</button>
+                                <button @click="cancelarReserva(reserva.reserva_id)" class="btn btn-danger" aria-label="Cancelar reserva de {{ reserva.ruta_titulo }}">Cancelar Reserva</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="activeTab === 'pasadas'" class="tab-pane active">
+            <div v-if="activeTab === 'pasadas'" class="tab-pane active" role="tabpanel">
                 <div class="row">
                     <h2>Reservas Pasadas</h2>
                     <div class="card-deck">
                         <div class="card" v-for="reserva in reservasPasadas" :key="reserva.reserva_id">
-                            <img :src="reserva.ruta_foto" class="card-img-top" alt="Imagen de la ruta">
+                            <img :src="reserva.ruta_foto" class="card-img-top" :alt="`Imagen de la ruta ${reserva.ruta_titulo}`">
                             <div class="card-body">
                                 <h5 class="card-title">{{ reserva.ruta_titulo }}</h5>
                                 <p class="card-text"><strong>Fecha:</strong> {{ reserva.ruta_fecha }}</p>
                                 <p class="card-text"><strong>Hora:</strong> {{ reserva.ruta_hora }}</p>
                                 <p class="card-text"><strong>Localidad:</strong> {{ reserva.ruta_localidad }}</p>
                                 <p class="card-text"><strong>Descripción:</strong> {{ reserva.ruta_descripcion }}</p>
-                                <button @click="openModal(reserva)" class="btn btn-primary">Añadir Valoración</button>
+                                <button @click="openModal(reserva)" class="btn btn-primary" aria-label="Añadir valoración a la ruta {{ reserva.ruta_titulo }}">Añadir Valoración</button>
                             </div>
                         </div>
                     </div>
@@ -249,23 +262,23 @@ function cancelarReserva(reservaId) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Añadir Valoración</h5>
-                    <button type="button" class="close" @click="closeModal" aria-label="Close">
+                    <button type="button" class="close" @click="closeModal" aria-label="Cerrar">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="estrellas">Estrellas</label>
-                        <input type="number" id="estrellas" v-model="estrellas" class="form-control" min="1" max="5">
+                        <input type="number" id="estrellas" v-model="estrellas" class="form-control" min="1" max="5" aria-label="Número de estrellas">
                     </div>
                     <div class="form-group">
                         <label for="comentario">Comentario</label>
-                        <textarea id="comentario" v-model="comentario" class="form-control"></textarea>
+                        <textarea id="comentario" v-model="comentario" class="form-control" aria-label="Comentario"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" @click="submitValoracion">Guardar Valoración</button>
+                    <button type="button" class="btn btn-secondary" @click="closeModal" aria-label="Cerrar modal de valoración">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @click="submitValoracion" aria-label="Guardar valoración">Guardar Valoración</button>
                 </div>
             </div>
         </div>
@@ -275,19 +288,19 @@ function cancelarReserva(reservaId) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Editar Reserva</h5>
-                    <button type="button" class="close" @click="closeEditModal" aria-label="Close">
+                    <button type="button" class="close" @click="closeEditModal" aria-label="Cerrar">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="numPersonas">Número de Asistentes</label>
-                        <input type="number" id="numPersonas" v-model="numPersonas" class="form-control" min="1">
+                        <input type="number" id="numPersonas" v-model="numPersonas" class="form-control" min="1" aria-label="Número de asistentes">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closeEditModal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" @click="submitEditReserva">Guardar Cambios</button>
+                    <button type="button" class="btn btn-secondary" @click="closeEditModal" aria-label="Cerrar modal de edición">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @click="submitEditReserva" aria-label="Guardar cambios en la reserva">Guardar Cambios</button>
                 </div>
             </div>
         </div>

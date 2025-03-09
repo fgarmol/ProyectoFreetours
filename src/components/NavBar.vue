@@ -34,7 +34,7 @@ function closeMenu(route) {
                     <RouterLink class="nav-link" :class="{ active: activeRoute === '/' }" to="/"
                         @click="closeMenu('/')">Home</RouterLink>
                 </li>
-                <li class="nav-item" v-if="datos?.autenticado && datos?.usuario.rol != 'guia'">
+                <li class="nav-item" v-if="datos?.autenticado">
                     <RouterLink class="nav-link" :class="{ active: activeRoute === '/tus-reservas' }" to="/tus-reservas"
                         @click="closeMenu('/tus-reservas')">Mis Reservas</RouterLink>
                 </li>

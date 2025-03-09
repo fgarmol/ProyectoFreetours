@@ -4,16 +4,18 @@ import router from '@/router';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const users = ref([]);
+// Props y eventos emitidos
+const props = defineProps({
+  usuarioAutenticado: Object
+});
+
+// Variables reactivas
 const guias = ref([]);
 const address = ref('');
 let map;
 let marker;
 
-const props = defineProps({
-  usuarioAutenticado: Object
-});
-
+// Función para mostrar alertas
 function showAlert(message, isSuccess = false) {
     $.notify({
         message: message
@@ -31,6 +33,7 @@ function showAlert(message, isSuccess = false) {
     });
 }
 
+// Nueva ruta y errores
 const newRuta = ref({
     titulo: '',
     localidad: '',
@@ -55,6 +58,7 @@ const errors = ref({
     guia_id: ''
 });
 
+// Limpiar formulario
 function clearForm() {
     newRuta.value = {
         titulo: '',
@@ -80,6 +84,7 @@ function clearForm() {
     };
 }
 
+// Cargar guías disponibles
 function cargarGuia() {
     fetch(`http://localhost/APIFreetours/api.php/asignaciones?fecha=${newRuta.value.fecha}`)
         .then(response => {
@@ -94,15 +99,16 @@ function cargarGuia() {
         .catch(error => showAlert(`Error al cargar guías: ${error.message}`));
 }
 
+// Validar formulario
 function validarFormulario() {
     let isValid = true;
-    const today = new Date().toISOString().split('T')[0]; // Obtener la fecha de hoy en formato YYYY-MM-DD
-    const urlPattern = new RegExp('^(https?:\\/\\/)?'+ // protocolo
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // dominio
-        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // IP (v4) dirección
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // puerto y ruta
-        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // cadena de consulta
-        '(\\#[-a-z\\d_]*)?$','i'); // fragmento de anclaje
+    const today = new Date().toISOString().split('T')[0];
+    const urlPattern = new RegExp('^(https?:\\/\\/)?'+
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+
+        '(\\#[-a-z\\d_]*)?$','i');
 
     if (!newRuta.value.titulo) {
         errors.value.titulo = 'El título es obligatorio';
@@ -167,6 +173,7 @@ function validarFormulario() {
     return isValid;
 }
 
+// Crear nueva ruta
 function crearRuta() {
     if (!validarFormulario()) {
         showAlert('Por favor, corrige los errores en el formulario', false);
@@ -206,6 +213,7 @@ function crearRuta() {
         .catch(error => showAlert(`Error al crear ruta: ${error.message}`));
 }
 
+// Inicializar mapa y cargar guías al montar el componente
 onMounted(() => {
     if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
         map = L.map('map').setView([40.4168, -3.7038], 13); 
@@ -229,6 +237,7 @@ onMounted(() => {
     }
 });
 
+// Buscar ubicación por dirección
 const searchLocation = async () => {
     if (!address.value) return;
     const response = await fetch(
@@ -252,71 +261,68 @@ const searchLocation = async () => {
 
 <template>
     <div class="container">
-        <div id="alert" class="alert" style="display: none;"></div>
+        <div id="alert" class="alert" style="display: none;" aria-live="polite"></div>
         <h1 class="m-3 mt-1">Crear Ruta</h1>
-        <form @submit.prevent="crearRuta" class="form m-3">
+        <form @submit.prevent="crearRuta" class="form m-3" aria-labelledby="form-crear-ruta">
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="titulo">Título</label>
-                    <input type="text" class="form-control" id="titulo" v-model="newRuta.titulo">
+                    <input type="text" class="form-control" id="titulo" v-model="newRuta.titulo" required aria-required="true" aria-label="Título">
                     <span class="text-danger">{{ errors.titulo }}</span>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="localidad">Localidad</label>
-                    <input type="text" class="form-control" id="localidad" v-model="newRuta.localidad">
+                    <input type="text" class="form-control" id="localidad" v-model="newRuta.localidad" required aria-required="true" aria-label="Localidad">
                     <span class="text-danger">{{ errors.localidad }}</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
-                <textarea class="form-control" id="descripcion" rows="3" v-model="newRuta.descripcion"></textarea>
+                <textarea class="form-control" id="descripcion" rows="3" v-model="newRuta.descripcion" required aria-required="true" aria-label="Descripción"></textarea>
                 <span class="text-danger">{{ errors.descripcion }}</span>
             </div>
             <div class="form-group">
                 <label for="foto">Foto</label>
-                <input type="text" class="form-control" id="foto" placeholder="URL" v-model="newRuta.foto">
+                <input type="text" class="form-control" id="foto" placeholder="URL" v-model="newRuta.foto" required aria-required="true" aria-label="Foto">
                 <span class="text-danger">{{ errors.foto }}</span>
             </div>
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="fecha">Fecha</label>
-                    <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha"
-                        @change="cargarGuia(newRuta.fecha)">
+                    <input type="date" class="form-control" id="fecha" v-model="newRuta.fecha" @change="cargarGuia(newRuta.fecha)" required aria-required="true" aria-label="Fecha">
                     <span class="text-danger">{{ errors.fecha }}</span>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="hora">Hora</label>
-                    <input type="time" class="form-control" id="hora" v-model="newRuta.hora">
+                    <input type="time" class="form-control" id="hora" v-model="newRuta.hora" required aria-required="true" aria-label="Hora">
                     <span class="text-danger">{{ errors.hora }}</span>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="latitud">Latitud</label>
-                    <input type="text" class="form-control" id="latitud" v-model="newRuta.latitud">
+                    <input type="text" class="form-control" id="latitud" v-model="newRuta.latitud" required aria-required="true" aria-label="Latitud">
                     <span class="text-danger">{{ errors.latitud }}</span>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="longitud">Longitud</label>
-                    <input type="text" class="form-control" id="longitud" v-model="newRuta.longitud">
+                    <input type="text" class="form-control" id="longitud" v-model="newRuta.longitud" required aria-required="true" aria-label="Longitud">
                     <span class="text-danger">{{ errors.longitud }}</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="guia">Guía</label>
-                <select class="form-control" id="guia" v-model="newRuta.guia_id">
-                    <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}
-                    </option>
+                <select class="form-control" id="guia" v-model="newRuta.guia_id" required aria-required="true" aria-label="Guía">
+                    <option v-for="guia in guias" :key="guia.id" :value="guia.id">{{ guia.nombre }}: {{ guia.id }}</option>
                 </select>
                 <span class="text-danger">{{ errors.guia_id }}</span>
             </div>
-            <button type="submit" class="btn btn-secondary">Crear</button>
+            <button type="submit" class="btn btn-secondary" aria-label="Crear ruta">Crear</button>
 
             <div class="form-group mt-3">
-                <input v-model="address" @keyup.enter="searchLocation" placeholder="Buscar dirección"
-                    class="form-control" />
-                <button @click="searchLocation" class="btn btn-secondary mt-2">Buscar</button>
-                <div id="map" class="mt-3"></div>
+                <input v-model="address" @keyup.enter="searchLocation" placeholder="Buscar dirección" class="form-control" aria-label="Buscar dirección" />
+                <button @click="searchLocation" class="btn btn-secondary mt-2" aria-label="Buscar dirección">Buscar</button>
+                <div id="map" class="mt-3" aria-label="Mapa"></div>
             </div>
         </form>
     </div>
