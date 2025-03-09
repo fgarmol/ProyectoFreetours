@@ -138,55 +138,13 @@ function RegistrarUsuario() {
       <input v-model="form.confirmPassword" @focus="touched.confirmPassword = true" @blur="validateConfirmPassword" type="password" class="form-control" placeholder="Confirmar Contraseña" required />
       <span class="text-danger" v-if="touched.confirmPassword">{{ errors.confirmPassword }}</span>
 
-      <button type="submit" class="btn btn-success mt-3">Registrarse</button>
+      <button type="submit" class="btn btn-secondary mt-3">Registrarse</button>
     </div>
   </form>
 </template>
 <style scoped>
-body {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-}
+@import '@/assets/styles/main.css';
 
-.form-group {
-    margin-bottom: 1rem;
-}
-
-label {
-    color: black; /* Texto negro */
-    font-weight: bold;
-}
-
-input {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-    border: 1px solid black; /* Borde negro */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-input:focus {
-    border-color: black; /* Borde negro al enfocar */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
-}
-
-.btn-success {
-    background-color: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-    border: none; /* Sin borde */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
-}
-
-.btn-success:hover {
-    background-color: white; /* Fondo blanco al pasar el ratón */
-    color: black; /* Texto negro al pasar el ratón */
-}
-
-.alert {
-    background-color: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-    border: none; /* Sin borde */
-    transition: opacity 0.3s ease; /* Transición suave */
-}
 
 .text-danger {
     color: red;

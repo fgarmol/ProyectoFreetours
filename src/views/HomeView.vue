@@ -206,7 +206,7 @@ function hideControls() {
               <option value="date">Fecha</option>
             </select>
           </div>
-          <span class="fw-bold">{{ toursOrdenados.length }} rutas encontradas</span>
+          <span class="fw-bold counters">{{ toursOrdenados.length }} rutas encontradas</span>
         </div>
         <div class="row">
           <div class="col-12 mb-4" v-for="tour in toursPaginados" :key="tour.id">
@@ -228,7 +228,7 @@ function hideControls() {
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-center">
+        <div class="pagination d-flex justify-content-center mt-3">
           <button @click="paginaAnterior" class="btn btn-secondary me-2"
             :disabled="paginaActual === 1">Anterior</button>
           <span class="align-self-center">Página {{ paginaActual }} de {{ totalPaginas }}</span>
@@ -241,16 +241,11 @@ function hideControls() {
 </template>
 
 <style scoped>
-body {
-  background-color: white; /* Fondo blanco */
-  color: black; /* Texto negro */
-}
+@import '@/assets/styles/main.css';
 
-.header {
-  background-color: black; /* Fondo negro */
-  color: white; /* Texto blanco */
-  padding: 1rem;
-}
+
+
+
 
 .carousel-indicators button {
   background-color: black; /* Fondo negro */
@@ -268,52 +263,6 @@ body {
 .carousel-control-prev-icon:hover,
 .carousel-control-next-icon:hover {
   filter: invert(0.5); /* Iconos grises al pasar el ratón */
-}
-
-.card {
-  background-color: white; /* Fondo blanco */
-  border: 1px solid black; /* Borde negro */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-.card:hover {
-  transform: scale(1.02); /* Efecto de zoom al pasar el ratón */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-}
-
-.card-title {
-  color: black; /* Texto negro */
-}
-
-.card-subtitle {
-  color: gray; /* Texto gris */
-}
-
-.btn-primary, .btn-secondary {
-  background-color: black; /* Fondo negro */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
-}
-
-.btn-primary:hover, .btn-secondary:hover {
-  background-color: whitesmoke;
-  color: black;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-  transform: scale(1.05); /* Transición de escala */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-   
-}
-.btn-primary:active, .btn-secondary:active{
-  background-color: black;
-  color: white;
-  box-shadow: inset 1px 1px 30px white;
-}
-
-
-.card-img-top {
-  height: 200px;
-  object-fit: cover;
 }
 
 .carousel-video, .carousel-item img {
@@ -358,10 +307,6 @@ body {
 .video-controls input[type="range"] {
   flex-grow: 1;
   margin: 0 10px;
-}
-
-.container {
-  padding-bottom: 5rem;
 }
 
 .card-body-search {

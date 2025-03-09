@@ -115,6 +115,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
 body {
     background-color: white; /* Fondo blanco */
     color: black; /* Texto negro */

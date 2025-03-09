@@ -295,118 +295,13 @@ function cancelarReserva(reservaId) {
 </template>
 
 <style scoped>
-.container {
-    padding-bottom: 5rem;
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-}
-
+@import '@/assets/styles/main.css';
 .card-deck {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
 }
-
-.card {
-    margin: 10px;
-    width: 18rem;
-    background-color: white; /* Fondo blanco */
-    border: 1px solid black; /* Borde negro */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-.card:hover {
-    transform: scale(1.05); /* Efecto de zoom al pasar el ratón */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-}
-
-.card-title {
-    color: black; /* Texto negro */
-}
-
-.card-text {
-    color: gray; /* Texto gris */
-}
-
-.nav-tabs {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid black; /* Borde negro */
-}
-
-.nav-link {
-    cursor: pointer;
-    color: black; /* Texto negro */
-    transition: color 0.3s ease, background-color 0.3s ease; /* Transición suave */
-}
-
-.nav-link.active {
-    background-color: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-}
-
-.nav-link:hover {
-    background-color: black; /* Fondo negro al pasar el ratón */
-    color: white; /* Texto blanco al pasar el ratón */
-}
-
-.modal {
-    background: rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-    border: 1px solid black; /* Borde negro */
-}
-
-.modal-header, .modal-footer {
-    border-bottom: 1px solid black; /* Borde negro */
-}
-
-.modal-header .close {
-    color: black; /* Texto negro */
-}
-
-.btn-primary, .btn-secondary, .btn-danger {
-    background-color: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-    border: none; /* Sin borde */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
-    margin-bottom: 0.5rem;
-}
-
-.btn-primary:hover, .btn-secondary:hover {
-    background-color: white; /* Fondo blanco al pasar el ratón */
-    color: black;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-  transform: scale(1.05); /* Transición de escala */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */ /* Texto negro al pasar el ratón */
-}
-.btn-danger:hover {
-    background-color: red;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-    transform: scale(1.05); /* Transición de escala */
-    transition: background-color 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-.btn-primary:active, .btn-secondary:active{
-    background-color: black;
-  color: white;
-  box-shadow: inset 1px 1px 30px white;
-}
-
-.alert {
-    background-color: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-    border: none; /* Sin borde */
-    transition: opacity 0.3s ease; /* Transición suave */
+.btn-secondary {
+    margin-right: 0.5rem;
 }
 </style>

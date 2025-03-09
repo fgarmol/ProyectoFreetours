@@ -77,6 +77,7 @@ function cerrarSesion() {
   color: black; /* Texto negro */
   white-space: nowrap; /* Evita que el título se divida en varias líneas */
   font-family: 'Playfair Display', serif;
+  margin-top: 0;
 }
 .bienvenido-text {
   font-family: 'Playfair Display', serif; /* Aplicar la nueva fuente */

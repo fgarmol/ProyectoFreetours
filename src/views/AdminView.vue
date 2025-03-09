@@ -203,7 +203,7 @@ const totalUsuarios = computed(() => users.value.length);
 <template>
   <div class="container">
     <h1>Administrar usuarios</h1>
-    <div id="alert" class="alert"></div>
+    
     <button class="btn btn-secondary mb-3" @click="mostrarModalCrearUsuario">Crear Usuario</button>
     <div class="counters d-flex justify-content-end mb-3">
       <span class="fw-bold">Total de usuarios: {{ totalUsuarios }}</span>
@@ -279,101 +279,7 @@ const totalUsuarios = computed(() => users.value.length);
 </template>
 
 <style scoped>
-body {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-}
-
-.container {
-    padding-bottom: 5rem;
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-}
-
-.table {
-    background-color: white; /* Fondo blanco */
-    border: 1px solid black; /* Borde negro */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-.table th, .table td {
-    color: black; /* Texto negro */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f9f9f9; /* Fondo gris claro para filas impares */
-}
-
-.table-striped tbody tr:hover {
-    background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
-}
-
- .btn-secondary {
-  background-color: black; /* Fondo negro */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
-}
-
-.btn-secondary:hover {
-  background-color: whitesmoke; /* Fondo blanco al pasar el ratón */
-  color: black; /* Texto negro al pasar el ratón */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-  transform: scale(1.05); /* Transición de escala */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-.btn-danger {
-  background-color: black; /* Fondo negro */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* Transición suave */
-}
-
-.btn-danger:hover {
-  background-color: red; /* Fondo rojo al pasar el ratón */
-  color: white; /* Texto blanco al pasar el ratón */
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */ /* Efecto de escala al pasar el ratón */
-}
-
-.modal-content {
-    background-color: white; /* Fondo blanco */
-    color: black; /* Texto negro */
-    border: 1px solid black; /* Borde negro */
-}
-
-.modal-header, .modal-footer {
-    border-bottom: 1px solid black; /* Borde negro */
-}
-
-.modal-header .btn-close {
-    color: black; /* Texto negro */
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.form-select {
-  background-color: white; /* Fondo blanco */
-  color: black; /* Texto negro */
-  border: 1px solid black; /* Borde negro */
-  transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
-}
-
-.form-select:hover {
-  background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
-  color: black; /* Texto negro al pasar el ratón */
-}
-
-.pagination button {
-    margin: 0 0.5rem;
-}
+@import '@/assets/styles/main.css';
 
 .counters {
     margin: 1rem 0;

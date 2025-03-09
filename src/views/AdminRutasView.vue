@@ -6,7 +6,7 @@ import router from '@/router';
 
 
 const props = defineProps({
-  usuarioAutenticado: Object
+    usuarioAutenticado: Object
 });
 
 const emit = defineEmits(['sesionIniciada']);
@@ -156,11 +156,11 @@ function cancelarRuta(rutaId) {
 onMounted(() => {
 
     if (props.usuarioAutenticado.autenticado && props.usuarioAutenticado.usuario.rol === 'admin') {
-    cargarRutas();
-  } else {
-    router.push('/');
-  }
-    
+        cargarRutas();
+    } else {
+        router.push('/');
+    }
+
 
 });
 
@@ -337,6 +337,7 @@ function closeModal() {
                                 <th @click="sortBy('titulo')">Título</th>
                                 <th @click="sortBy('localidad')">Localidad</th>
                                 <th @click="sortBy('descripcion')">Descripción</th>
+                                <th @click="sortBy('asistentes')">Asistentes</th>
                                 <th @click="sortBy('fecha')">Fecha</th>
                                 <th @click="sortBy('hora')">Hora</th>
                                 <th @click="sortBy('latitud')">Latitud</th>
@@ -351,6 +352,9 @@ function closeModal() {
                                 <td>{{ ruta.titulo }}</td>
                                 <td>{{ ruta.localidad }}</td>
                                 <td>{{ ruta.descripcion }}</td>
+                                <td>{{ ruta.asistentes }} <span v-if="ruta.asistentes < 10" class="text-warning">
+                                        <i class="fas fa-exclamation-triangle"></i>❗>10</span>
+                                </td>
                                 <td>{{ ruta.fecha }}</td>
                                 <td>{{ ruta.hora }}</td>
                                 <td>{{ ruta.latitud }}</td>
@@ -367,9 +371,6 @@ function closeModal() {
                                     <button @click="cancelarRuta(ruta.id)"
                                         class="btn btn-danger btn-sm">Eliminar</button>
                                     <button @click="openModal(ruta)" class="btn btn-secondary btn-sm">Duplicar</button>
-                                    <span v-if="ruta.asistentes < 10" class="text-warning">
-                                        <i class="fas fa-exclamation-triangle"></i>❗-10 asistentes
-                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -385,6 +386,7 @@ function closeModal() {
                                 <th @click="sortBy('titulo')">Título</th>
                                 <th @click="sortBy('localidad')">Localidad</th>
                                 <th @click="sortBy('descripcion')">Descripción</th>
+                                <th @click="sortBy('asistentes')">Asistentes</th>
                                 <th @click="sortBy('fecha')">Fecha</th>
                                 <th @click="sortBy('hora')">Hora</th>
                                 <th @click="sortBy('asistentes')">Asistentes</th>
@@ -398,6 +400,7 @@ function closeModal() {
                                 <td>{{ ruta.titulo }}</td>
                                 <td>{{ ruta.localidad }}</td>
                                 <td>{{ ruta.descripcion }}</td>
+                                <td>{{ ruta.asistentes }}</td>
                                 <td>{{ ruta.fecha }}</td>
                                 <td>{{ ruta.hora }}</td>
                                 <td>{{ ruta.asistentes }}</td>
@@ -472,174 +475,12 @@ function closeModal() {
 </template>
 
 <style scoped>
-.container {
-    padding-bottom: 5rem;
-    background-color: white;
-    /* Fondo blanco */
-    color: black;
-    /* Texto negro */
-}
-
-.table {
-    background-color: white;
-    /* Fondo blanco */
-    border: 1px solid black;
-    /* Borde negro */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Transición suave */
-}
-
-.table th,
-.table td {
-    color: black;
-    /* Texto negro */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f9f9f9;
-    /* Fondo gris claro para filas impares */
-}
-
-.table-striped tbody tr:hover {
-    background-color: #f1f1f1;
-    /* Fondo gris claro al pasar el ratón */
-}
-
-
-.btn-secondary {
-    background-color: black;
-    color: white;
-    border: none;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-    margin-bottom: 0.5rem; /* Ajuste del margen inferior */
-}
-
-.btn-secondary:hover {
-    background-color: whitesmoke;
-    /* Fondo blanco al pasar el ratón */
-    color: black;
-    /* Texto negro al pasar el ratón */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-  transform: scale(1.05); /* Transición de escala */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-.btn-danger {
-    background-color: black;
-    color: white;
-    border: none;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-    margin-bottom: 0.5rem; /* Ajuste del margen inferior */
-    margin-right: 0.5rem; /* Ajuste del margen derecho */
-}
-.btn-secondary:active{
-    background-color: black;
-  color: white;
-  box-shadow: inset 1px 1px 30px white;
-}
-
-
-.btn-danger:hover {
-    background-color: red;
-    /* Fondo rojo al pasar el ratón */
-    color: white;
-    /* Texto blanco al pasar el ratón */
-    transform: scale(1.1);
-    /* Efecto de escala al pasar el ratón */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-  
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-}
-
-.modal-content {
-    background-color: white;
-    /* Fondo blanco */
-    color: black;
-    /* Texto negro */
-    border: 1px solid black;
-    /* Borde negro */
-}
-
-.modal-header,
-.modal-footer {
-    border-bottom: 1px solid black;
-    /* Borde negro */
-}
-
-.modal-header .btn-close {
-    color: black;
-    /* Texto negro */
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.pagination button {
-    margin: 0 0.5rem;
-}
-
-.counters {
-    margin: 1rem 0;
-}
-
-.nav-tabs {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid black;
-    /* Borde negro */
-}
-
-.nav-link {
-    cursor: pointer;
-    color: black;
-    /* Texto negro */
-    transition: color 0.3s ease, background-color 0.3s ease;
-    /* Transición suave */
-}
+@import '@/assets/styles/main.css';
 
 .nav-link.active {
     background-color: black !important;
-    /* Fondo negro */
+
     color: white !important;
-    /* Texto blanco */
-}
 
-.nav-link:hover {
-    background-color: black;
-    /* Fondo negro al pasar el ratón */
-    color: white;
-    /* Texto blanco al pasar el ratón */
-}
-
-select {
-    background-color: white;
-    /* Fondo blanco */
-    color: black;
-    /* Texto negro */
-    border: 1px solid black;
-    /* Borde negro */
-    padding: 0.5rem;
-    /* Espaciado interno */
-    border-radius: 0.25rem;
-    /* Bordes redondeados */
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    /* Transición suave */
-}
-
-select:hover {
-    background-color: #f1f1f1;
-    /* Fondo gris claro al pasar el ratón */
-    color: black;
-    /* Texto negro */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
-}
-
-select:focus {
-    outline: none;
-    /* Sin borde de enfoque */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Sombra azul clara */
 }
 </style>

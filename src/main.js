@@ -5,7 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import 'bootstrap-notify';
 import $ from 'jquery';
-import './assets/styles/colors.css';
+
+import '@/assets/styles/main.css';
 
 window.$ = $;
 
